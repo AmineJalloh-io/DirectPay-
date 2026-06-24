@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
-    <title>DirectPay+ | Login · Merchant Registration & Payment</title>
+    <title>DirectPay+ · Main</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+    </script>
     <style>
         * {
             margin: 0;
@@ -83,6 +85,35 @@
             }
         }
 
+        /* ── Protocol warning banner ── */
+        .protocol-warning-banner {
+            background: #fee2e2;
+            border: 2px solid #dc2626;
+            border-radius: 0.8rem;
+            padding: 0.6rem;
+            margin: 0.5rem 1rem 0.5rem 1rem;
+            font-size: 0.7rem;
+            color: #7f1d1d;
+            display: none;
+        }
+        .protocol-warning-banner strong {
+            color: #dc2626;
+        }
+        .protocol-warning-banner .btn-fix {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.2rem 0.8rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.65rem;
+            margin-left: 0.3rem;
+        }
+        .protocol-warning-banner .btn-fix:hover {
+            background: #b91c1c;
+        }
+
         .two-col-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -121,9 +152,21 @@
             font-size: 0.8rem;
             word-break: break-word;
         }
-
         .info-card p {
             margin: 0.4rem 0;
+        }
+        .info-card .debug-row {
+            font-size: 0.7rem;
+            color: #475569;
+            border-top: 1px dashed #d1d5db;
+            padding-top: 0.4rem;
+            margin-top: 0.4rem;
+        }
+        .info-card .debug-row code {
+            background: #e2e8f0;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.3rem;
+            font-size: 0.65rem;
         }
 
         .form-group {
@@ -195,7 +238,9 @@
         .release-button,
         .gen-id-button,
         .reset-btn,
-        .send-receipt-btn {
+        .send-receipt-btn,
+        .show-qr-btn,
+        .settings-btn {
             width: 100%;
             padding: 0.65rem;
             border: none;
@@ -226,6 +271,28 @@
             background: #e2e8f0;
             color: #1e293b;
         }
+        .show-qr-btn {
+            background: #0b2b3f;
+            color: white;
+        }
+        .show-qr-btn:hover {
+            background: #1a4a6e;
+        }
+        .show-qr-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .settings-btn {
+            background: #f1f5f9;
+            color: #1e293b;
+            font-size: 0.7rem;
+            padding: 0.3rem;
+            margin-top: 0.3rem;
+            border: 1px solid #d1d5db;
+        }
+        .settings-btn:hover {
+            background: #e2e8f0;
+        }
         .send-receipt-btn {
             background: #059669;
             color: white;
@@ -254,11 +321,12 @@
             margin-right: 0.5rem;
         }
 
-        /* ----- MODALS ----- */
+        /* ── Modals ── */
         .policy-modal-overlay,
         .modal-overlay,
         .receipt-modal-overlay,
-        .login-modal-overlay {
+        .login-modal-overlay,
+        .settings-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -278,7 +346,8 @@
         .policy-modal-overlay.active,
         .modal-overlay[style*="display: flex"],
         .receipt-modal-overlay.active,
-        .login-modal-overlay.active {
+        .login-modal-overlay.active,
+        .settings-modal-overlay.active {
             visibility: visible;
             opacity: 1;
         }
@@ -286,7 +355,8 @@
         .policy-modal,
         .registration-modal,
         .receipt-modal,
-        .login-modal {
+        .login-modal,
+        .settings-modal {
             background: white;
             border-radius: 1.5rem;
             max-width: 550px;
@@ -335,7 +405,6 @@
             cursor: pointer;
             font-size: 1rem;
         }
-
         .btn-login:hover {
             background: #1a4a6e;
         }
@@ -351,7 +420,6 @@
             margin-top: 0.5rem;
             display: inline-block;
         }
-
         .btn-switch-modal:hover {
             color: #f97316;
         }
@@ -405,6 +473,7 @@
         }
 
         .transaction-badge {
+            display: inline-block;
             background: #fef3c7;
             color: #92400e;
             font-size: 0.6rem;
@@ -415,7 +484,7 @@
             display: inline-block;
         }
 
-        /* Receipt styles */
+        /* Receipt */
         .receipt-content {
             background: #f8fafc;
             border-radius: 0.8rem;
@@ -424,23 +493,19 @@
             border: 1px dashed #94a3b8;
             margin: 0.5rem 0;
         }
-
         .receipt-content .row {
             display: flex;
             justify-content: space-between;
             padding: 0.25rem 0;
             border-bottom: 1px solid #e2e8f0;
         }
-
         .receipt-content .row:last-child {
             border-bottom: none;
         }
-
         .receipt-content .label {
             font-weight: 600;
             color: #475569;
         }
-
         .receipt-content .value {
             color: #0f172a;
             text-align: right;
@@ -455,7 +520,6 @@
             justify-content: center;
             margin-top: 0.75rem;
         }
-
         .receipt-actions button {
             padding: 0.5rem 1.2rem;
             border: none;
@@ -464,17 +528,14 @@
             font-size: 0.8rem;
             cursor: pointer;
         }
-
         .btn-sms {
             background: #059669;
             color: white;
         }
-
         .btn-copy-receipt {
             background: #3b82f6;
             color: white;
         }
-
         .btn-close-receipt {
             background: #e2e8f0;
             color: #1e293b;
@@ -487,7 +548,6 @@
             color: #0b2b3f;
             margin-bottom: 0.5rem;
         }
-
         .receipt-subtitle {
             text-align: center;
             font-size: 0.7rem;
@@ -500,7 +560,6 @@
             text-align: center;
             margin-bottom: 0.25rem;
         }
-
         .login-welcome {
             text-align: center;
             font-size: 1.2rem;
@@ -508,28 +567,11 @@
             color: #0b2b3f;
             margin-bottom: 0.25rem;
         }
-
         .login-sub {
             text-align: center;
             font-size: 0.8rem;
             color: #64748b;
             margin-bottom: 0.8rem;
-        }
-
-        .login-name-display {
-            background: #f1f5f9;
-            border-radius: 1rem;
-            padding: 0.6rem 0.8rem;
-            text-align: center;
-            font-weight: 600;
-            font-size: 1rem;
-            color: #0b2b3f;
-            margin-bottom: 0.5rem;
-            border: 1px solid #e2e8f0;
-        }
-
-        .login-name-display span {
-            color: #f97316;
         }
 
         .auto-fill-btn {
@@ -544,7 +586,6 @@
             width: 100%;
             margin-bottom: 0.75rem;
         }
-
         .auto-fill-btn:hover {
             background: #bae6fd;
         }
@@ -558,9 +599,232 @@
             display: none;
             margin-top: 0.3rem;
         }
+        .login-error-box .detail {
+            font-size: 0.65rem;
+            color: #991b1b;
+            margin-top: 0.2rem;
+            background: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+        }
+
+        .qr-login-hint {
+            display: none;
+            background: #fef3c7;
+            border-radius: 0.8rem;
+            padding: 0.5rem 0.7rem;
+            font-size: 0.65rem;
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+        .qr-login-hint.active {
+            display: block;
+        }
+
+        /* Tx checkboxes */
+        .tx-checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem 0.5rem;
+            background: #f8fafc;
+            padding: 0.5rem;
+            border-radius: 0.8rem;
+            border: 1px solid #e2e8f0;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .tx-checkbox-grid label {
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+        }
+        .tx-checkbox-grid input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        @media (max-width: 480px) {
+            .tx-checkbox-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .selected-tx-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.3rem;
+        }
+        .selected-tx-list .tx-tag {
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+
+        /* Settings modal */
+        .settings-modal .modal-body p {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        .settings-modal .form-group input {
+            font-size: 0.8rem;
+        }
+        .base-url-status {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            padding: 0.3rem;
+            border-radius: 0.5rem;
+        }
+        .base-url-status.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .base-url-status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .base-url-status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .btn-save-settings {
+            background: #0b2b3f;
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+        }
+        .btn-save-settings:hover {
+            background: #1a4a6e;
+        }
+
+        .settings-help {
+            background: #f8fafc;
+            border-radius: 0.8rem;
+            padding: 0.6rem;
+            font-size: 0.7rem;
+            color: #475569;
+            margin: 0.5rem 0;
+            border: 1px solid #e2e8f0;
+        }
+        .settings-help code {
+            background: #e2e8f0;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.3rem;
+            font-size: 0.65rem;
+        }
+
+        .url-display-box {
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 0.4rem;
+            font-size: 0.65rem;
+            word-break: break-all;
+            margin-top: 0.5rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .url-display-box .copy-url-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .url-display-box .copy-url-btn:hover {
+            background: #d1d5db;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+
+        .debug-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            font-size: 0.6rem;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 0.2rem;
+        }
+        .debug-toggle-btn:hover {
+            color: #1e293b;
+        }
+        .debug-data {
+            display: none;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.5rem;
+            font-size: 0.65rem;
+            margin-top: 0.3rem;
+            border: 1px solid #e2e8f0;
+            word-break: break-all;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .debug-data.active {
+            display: block;
+        }
+        .debug-data code {
+            font-family: monospace;
+            font-size: 0.6rem;
+        }
+        .match-badge {
+            display: inline-block;
+            font-size: 0.6rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+        .match-badge.yes {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .match-badge.no {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Small note */
+        .auto-populate-note {
+            font-size: 0.6rem;
+            color: #6b7280;
+            margin-top: 0.2rem;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
+
+    <!-- ===== PROTOCOL WARNING BANNER ===== -->
+    <div id="protocolWarningBanner" class="protocol-warning-banner" style="display:none;">
+        ⚠️ <strong>file:// protocol detected!</strong> QR codes will NOT work from other devices.
+        <button class="btn-fix" id="fixProtocolBtn">⚙️ Set Base URL</button>
+        <div style="margin-top:0.3rem; font-size:0.65rem; color:#991b1b;">
+            Please host this file on a web server (e.g., GitHub Pages, Netlify, VS Code Live Server)
+            and set the Base URL in settings.
+        </div>
+    </div>
 
     <!-- ===== LOGIN MODAL ===== -->
     <div id="loginModal" class="login-modal-overlay active">
@@ -574,15 +838,18 @@
                 <div class="login-welcome">Hello, <span id="loginNamePlaceholder">User</span></div>
                 <div class="login-sub">Enter your identifier to log in</div>
 
-                <!-- Pre-filled name (read-only) -->
-                <div class="form-group">
-                    <label>👤 Your Name</label>
-                    <input type="text" id="loginNameField" class="readonly-field" readonly placeholder="Name will appear here" />
+                <div id="qrLoginHint" class="qr-login-hint">
+                    📷 QR code detected! Your name and identifier have been pre‑filled.
                 </div>
 
                 <div class="form-group">
-                    <label>📞 9-digit phone OR 6-digit agent code *</label>
-                    <input type="text" id="loginIdentifierField" placeholder="e.g., 761234567 or 892345" />
+                    <label>👤 Your Name</label>
+                    <input type="text" id="loginNameField" class="readonly-field login-readonly" readonly placeholder="Name will appear here" />
+                </div>
+
+                <div class="form-group">
+                    <label>📞 9‑digit phone OR 6‑digit agent code</label>
+                    <input type="text" id="loginIdentifierField" class="readonly-field login-readonly" readonly placeholder="e.g., 761234567 or 892345" />
                     <div id="loginIdentifierError" class="error-text"></div>
                 </div>
 
@@ -626,7 +893,7 @@
                     <input type="text" id="popupRecipientName" placeholder="Full name of recipient" />
                 </div>
                 <div class="form-group">
-                    <label>📞 9-digit phone OR 6-digit agent code *</label>
+                    <label>📞 9‑digit phone OR 6‑digit agent code *</label>
                     <input type="text" id="popupIdentifier" placeholder="e.g., 761234567 or 892345" />
                     <div id="popupIdentifierError" class="error-text"></div>
                 </div>
@@ -653,6 +920,14 @@
                         <option>Administrator</option>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label>📋 Transaction types you accept *</label>
+                    <div class="tx-checkbox-grid" id="txCheckboxGrid"></div>
+                    <div id="txTypesError" class="error-text"></div>
+                    <div class="selected-tx-list" id="selectedTxDisplay"></div>
+                </div>
+
                 <div id="popupModalError" class="error-text" style="background:#fee2e2; padding:0.5rem; border-radius:0.5rem; display:none;"></div>
 
                 <div style="text-align:center; margin-top:0.5rem;">
@@ -661,6 +936,38 @@
             </div>
             <div class="modal-footer">
                 <button id="confirmRegistrationBtn" class="btn-register">✅ Register & Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SETTINGS MODAL ===== -->
+    <div id="settingsModal" class="settings-modal-overlay">
+        <div class="settings-modal">
+            <div class="modal-header">
+                <h2>⚙️ QR Base URL</h2>
+                <p>Set the public URL of this application</p>
+            </div>
+            <div class="modal-body">
+                <div class="settings-help">
+                    <strong>📌 Why is this needed?</strong><br />
+                    Your QR code must point to a <strong>web URL</strong> (http:// or https://),
+                    not a local file path (<code>file://</code>). Phone scanners don't understand <code>file://</code>.
+                </div>
+
+                <div class="form-group">
+                    <label>🌐 Base URL (including protocol and path)</label>
+                    <input type="text" id="baseUrlInput" placeholder="https://yourdomain.com/directpay.html" />
+                    <div id="baseUrlStatus" class="base-url-status warning">⚠️ Not set – QR will not work properly</div>
+                </div>
+
+                <div style="font-size:0.7rem; color:#64748b; margin-top:-0.3rem;">
+                    Example: <code>https://myapp.com/directpay.html</code> or <code>http://192.168.1.100:5500/directpay.html</code>
+                </div>
+
+                <button id="saveSettingsBtn" class="btn-save-settings">💾 Save Settings</button>
+                <div style="text-align:center; margin-top:0.5rem;">
+                    <button class="btn-switch-modal" id="closeSettingsBtn">✕ Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -688,9 +995,7 @@
                 <h2>🧾 Payment Receipt</h2>
                 <p>Transaction confirmed</p>
             </div>
-            <div class="modal-body" id="receiptBody">
-                <!-- dynamically filled -->
-            </div>
+            <div class="modal-body" id="receiptBody"></div>
             <div class="modal-footer">
                 <div class="receipt-actions">
                     <button class="btn-sms" id="sendReceiptSmsBtn">📱 Send via SMS</button>
@@ -720,8 +1025,20 @@
                         <p><strong>Recipient:</strong> <span id="displayRecipientName">—</span></p>
                         <p><strong>Contact Person:</strong> <span id="displayContactName">—</span></p>
                         <p><strong>Contact Phone:</strong> <span id="displayContactPhone">—</span></p>
+                        <p><strong>Accepted Tx Types:</strong> <span id="displayTxTypes" style="font-weight:400;">—</span></p>
+
+                        <!-- Debug section -->
+                        <div class="debug-row">
+                            <button class="debug-toggle-btn" id="debugToggleBtn">🔍 Show stored data</button>
+                            <div class="debug-data" id="debugDataDisplay">
+                                <code id="debugDataContent">No data</code>
+                            </div>
+                        </div>
                     </div>
-                    <button id="resetRegistrationBtn" class="reset-btn">🔄 Reset & Register New Client</button>
+
+                    <button id="showQrBtn" class="show-qr-btn">📱 Show My QR Code</button>
+                    <button id="resetRegistrationBtn" class="reset-btn" style="margin-top:0.8rem;">🔄 Reset & Register New Client</button>
+                    <button id="openSettingsBtn" class="settings-btn">⚙️ QR Base URL Settings</button>
                 </div>
 
                 <!-- RIGHT PANEL -->
@@ -774,19 +1091,10 @@
                         <label>📂 Transaction Category *</label>
                         <select id="transactionCategory">
                             <option value="" disabled selected>– Select transaction category –</option>
-                            <option value="Pay">Pay</option>
-                            <option value="Buy Good">Buy Good</option>
-                            <option value="Subscription">Subscription</option>
-                            <option value="Services">Services</option>
-                            <option value="Education">Education</option>
-                            <option value="Transport">Transport</option>
-                            <option value="Buy Product">Buy Product</option>
-                            <option value="Transfer">Transfer</option>
-                            <option value="Donation">Donation</option>
-                            <option value="Gifting">Gifting</option>
-                            <option value="Others">Others</option>
+                            <!-- Options will be dynamically populated from user's accepted types -->
                         </select>
                         <div id="transactionCategoryError" class="error-text"></div>
+                        <div class="auto-populate-note">✅ Options are auto‑populated from your accepted transaction types</div>
                     </div>
 
                     <div class="form-group">
@@ -828,16 +1136,22 @@
 
     <script>
         (function() {
-            // ========== CONFIG ==========
+            // ===== CONFIG =====
             const REGISTRATION_ENDPOINT = "https://formspree.io/f/xvznklyd";
             const MERCHANT_ENDPOINT = "https://formspree.io/f/xeewandk";
             const GROUP_ONE = ["076", "074", "073", "079", "078", "075"];
             const GROUP_TWO = ["077", "088", "099", "080", "090", "030", "070", "033"];
 
+            const TX_TYPES = [
+                "Cash Payment", "Bank Transfer", "Mobile Money", "Card Payment",
+                "Cheque", "Cryptocurrency", "Invoice", "Subscription",
+                "Donation", "Gift", "Service Fee", "Product Purchase",
+                "Rent", "Salary", "Commission", "Refund", "Deposit",
+                "Withdrawal", "Loan Repayment", "Insurance Premium"
+            ];
+
             let serialCounter = 1;
             const SERIAL_KEY = "global_serial_counter";
-
-            // Store previous client data for auto-fill
             let previousClientData = null;
 
             function loadSerial() {
@@ -859,8 +1173,7 @@
                 return `NW${randDigits(7)}.${randDigits(5)}.M${randDigits(7)}`;
             }
 
-            // ========== DOM REFS ==========
-            // Login
+            // ===== DOM REFS =====
             const loginModal = document.getElementById('loginModal');
             const loginNameField = document.getElementById('loginNameField');
             const loginNamePlaceholder = document.getElementById('loginNamePlaceholder');
@@ -869,8 +1182,8 @@
             const loginErrorBox = document.getElementById('loginErrorBox');
             const loginBtn = document.getElementById('loginBtn');
             const switchToRegisterFromLogin = document.getElementById('switchToRegisterFromLogin');
+            const qrLoginHint = document.getElementById('qrLoginHint');
 
-            // Registration
             const regModal = document.getElementById('registrationModal');
             const mainContent = document.getElementById('mainContent');
             const popupBiz = document.getElementById('popupBizName');
@@ -888,7 +1201,10 @@
             const autoFillRegBtn = document.getElementById('autoFillRegistrationBtn');
             const switchToLoginFromRegister = document.getElementById('switchToLoginFromRegister');
 
-            // Merchant
+            const txCheckboxGrid = document.getElementById('txCheckboxGrid');
+            const txTypesError = document.getElementById('txTypesError');
+            const selectedTxDisplay = document.getElementById('selectedTxDisplay');
+
             const mBiz = document.getElementById('merchantBizName');
             const mAddr = document.getElementById('merchantAddress');
             const mId = document.getElementById('merchantIdentifier');
@@ -915,8 +1231,8 @@
             const pay = document.getElementById('payBtn');
             const feedback = document.getElementById('merchantFeedback');
             const resetAllBtn = document.getElementById('resetRegistrationBtn');
+            const showQrBtn = document.getElementById('showQrBtn');
 
-            // Display
             const dispBiz = document.getElementById('displayBizName');
             const dispAddr = document.getElementById('displayAddress');
             const dispId = document.getElementById('displayIdentifier');
@@ -924,26 +1240,37 @@
             const dispRec = document.getElementById('displayRecipientName');
             const dispContactName = document.getElementById('displayContactName');
             const dispContactPhone = document.getElementById('displayContactPhone');
+            const dispTxTypes = document.getElementById('displayTxTypes');
 
-            // Receipt
             const receiptModal = document.getElementById('receiptModal');
             const receiptBody = document.getElementById('receiptBody');
             const sendReceiptSmsBtn = document.getElementById('sendReceiptSmsBtn');
             const copyReceiptBtn = document.getElementById('copyReceiptBtn');
             const closeReceiptBtn = document.getElementById('closeReceiptBtn');
 
-            // Policy
             const policyModal = document.getElementById('policyModal');
             const policyOk = document.getElementById('policyOkBtn');
             let policyOkFlag = false;
 
-            // ========== STATE ==========
-            let lastReceiptData = null;
+            const settingsModal = document.getElementById('settingsModal');
+            const baseUrlInput = document.getElementById('baseUrlInput');
+            const baseUrlStatus = document.getElementById('baseUrlStatus');
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            const openSettingsBtn = document.getElementById('openSettingsBtn');
+            const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
-            // ========== UTILITY ==========
-            function isRegistered() {
-                return localStorage.getItem('clientRegistered') === 'true';
-            }
+            const protocolBanner = document.getElementById('protocolWarningBanner');
+            const fixProtocolBtn = document.getElementById('fixProtocolBtn');
+
+            const debugToggleBtn = document.getElementById('debugToggleBtn');
+            const debugDataDisplay = document.getElementById('debugDataDisplay');
+            const debugDataContent = document.getElementById('debugDataContent');
+
+            let lastReceiptData = null;
+            let baseUrl = localStorage.getItem('base_url') || '';
+
+            // ===== UTILITY =====
+            function isRegistered() { return localStorage.getItem('clientRegistered') === 'true'; }
 
             function getClientData() {
                 const raw = localStorage.getItem('clientData');
@@ -954,8 +1281,19 @@
             }
 
             function saveClient(data) {
+                const trimmed = {};
+                for (const [key, val] of Object.entries(data)) {
+                    if (typeof val === 'string') {
+                        trimmed[key] = val.trim();
+                    } else if (Array.isArray(val)) {
+                        trimmed[key] = val.map(v => typeof v === 'string' ? v.trim() : v);
+                    } else {
+                        trimmed[key] = val;
+                    }
+                }
                 localStorage.setItem('clientRegistered', 'true');
-                localStorage.setItem('clientData', JSON.stringify(data));
+                localStorage.setItem('clientData', JSON.stringify(trimmed));
+                return trimmed;
             }
 
             function clearClient() {
@@ -963,7 +1301,68 @@
                 localStorage.removeItem('clientData');
             }
 
+            function trimString(val) {
+                return typeof val === 'string' ? val.trim() : val;
+            }
+
+            // ===== POPULATE TRANSACTION CATEGORY DROPDOWN =====
+            function populateCategoryDropdown(types) {
+                if (!transactionCat) return;
+                // Save current selected value (if any)
+                const currentVal = transactionCat.value;
+                // Clear all options
+                transactionCat.innerHTML = '';
+                // Add default disabled option
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.disabled = true;
+                defaultOpt.selected = true;
+                defaultOpt.textContent = '– Select transaction category –';
+                transactionCat.appendChild(defaultOpt);
+
+                if (types && types.length > 0) {
+                    types.forEach(type => {
+                        const opt = document.createElement('option');
+                        opt.value = type;
+                        opt.textContent = type;
+                        transactionCat.appendChild(opt);
+                    });
+                } else {
+                    // Fallback: add some default options if no types (should not happen)
+                    const fallback = ['Pay', 'Buy Good', 'Subscription', 'Services', 'Education', 'Transport', 'Buy Product',
+                        'Transfer', 'Donation', 'Gifting', 'Others'
+                    ];
+                    fallback.forEach(type => {
+                        const opt = document.createElement('option');
+                        opt.value = type;
+                        opt.textContent = type;
+                        transactionCat.appendChild(opt);
+                    });
+                }
+
+                // Restore previous selection if it exists and is still valid
+                if (currentVal) {
+                    const options = transactionCat.querySelectorAll('option');
+                    let found = false;
+                    for (let opt of options) {
+                        if (opt.value === currentVal) {
+                            opt.selected = true;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        // Reset to default (first disabled option)
+                        transactionCat.selectedIndex = 0;
+                    }
+                } else {
+                    transactionCat.selectedIndex = 0;
+                }
+            }
+
+            // ===== FILL FORMS =====
             function fillForms(data) {
+                if (!data) return;
                 mBiz.value = data.businessName || '';
                 mAddr.value = data.address || '';
                 mId.value = data.identifier || '';
@@ -979,16 +1378,47 @@
                 dispRec.innerText = data.recipientName || '—';
                 dispContactName.innerText = data.contactName || '—';
                 dispContactPhone.innerText = data.contactPhone || '—';
+                const txList = data.transactionTypes || [];
+                dispTxTypes.innerText = txList.length ? txList.join(', ') : '—';
+                updateSelectedTxDisplay(txList);
+                if (txCheckboxGrid) {
+                    const checkboxes = txCheckboxGrid.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = txList.includes(cb.value);
+                    });
+                }
+                // Populate transaction category dropdown with the same list
+                populateCategoryDropdown(txList);
+                updateDebugData();
             }
 
-            function showLoginError(msg) {
+            function updateDebugData() {
+                const data = getClientData();
+                if (data) {
+                    debugDataContent.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    debugDataContent.textContent = 'No stored data';
+                }
+            }
+
+            function updateSelectedTxDisplay(selected) {
+                if (!selectedTxDisplay) return;
+                selectedTxDisplay.innerHTML = selected.map(t =>
+                    `<span class="tx-tag">${t}</span>`
+                ).join('');
+            }
+
+            function showLoginError(msg, detail) {
                 loginErrorBox.style.display = 'block';
-                loginErrorBox.innerText = msg;
+                let html = msg;
+                if (detail) {
+                    html += `<div class="detail">${detail}</div>`;
+                }
+                loginErrorBox.innerHTML = html;
             }
 
-            function hideLoginError() {
-                loginErrorBox.style.display = 'none';
-            }
+            function hideLoginError() { loginErrorBox.style.display = 'none';
+                loginErrorBox.innerHTML = ''; }
 
             function showPopupErr(msg) {
                 popupErrorSpan.style.display = 'block';
@@ -1004,38 +1434,320 @@
                 if (type !== 'error') setTimeout(() => feedback.style.display = 'none', 5000);
             }
 
-            // ========== LOGIN LOGIC ==========
+            // ===== PROTOCOL CHECK =====
+            function checkProtocol() {
+                const protocol = window.location.protocol;
+                if (protocol === 'file:') {
+                    protocolBanner.style.display = 'block';
+                    showQrBtn.disabled = true;
+                    showQrBtn.title = 'Set a base URL first';
+                    return true;
+                } else {
+                    protocolBanner.style.display = 'none';
+                    showQrBtn.disabled = false;
+                    showQrBtn.title = '';
+                    return false;
+                }
+            }
+
+            // ===== TX CHECKBOX INIT =====
+            function initTxCheckboxes() {
+                if (!txCheckboxGrid) return;
+                txCheckboxGrid.innerHTML = '';
+                TX_TYPES.forEach(type => {
+                    const label = document.createElement('label');
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.value = type;
+                    cb.className = 'tx-checkbox';
+                    label.appendChild(cb);
+                    label.appendChild(document.createTextNode(type));
+                    txCheckboxGrid.appendChild(label);
+                });
+                txCheckboxGrid.addEventListener('change', function(e) {
+                    if (e.target.type === 'checkbox') {
+                        const selected = getSelectedTxTypes();
+                        updateSelectedTxDisplay(selected);
+                        txTypesError.innerText = '';
+                    }
+                });
+            }
+
+            function getSelectedTxTypes() {
+                const checkboxes = txCheckboxGrid.querySelectorAll('input[type="checkbox"]:checked');
+                return Array.from(checkboxes).map(cb => cb.value);
+            }
+
+            // ===== BASE URL SETTINGS =====
+            function updateSettingsUI() {
+                baseUrl = localStorage.getItem('base_url') || '';
+                baseUrlInput.value = baseUrl;
+                if (baseUrl) {
+                    if (baseUrl.startsWith('http://') || baseUrl.startsWith('https://')) {
+                        baseUrlStatus.className = 'base-url-status success';
+                        baseUrlStatus.innerHTML = '✅ Using valid base URL: <strong>' + baseUrl + '</strong>';
+                    } else {
+                        baseUrlStatus.className = 'base-url-status error';
+                        baseUrlStatus.innerHTML = '❌ Invalid URL (must start with http:// or https://): <strong>' +
+                            baseUrl + '</strong>';
+                    }
+                } else {
+                    baseUrlStatus.className = 'base-url-status warning';
+                    baseUrlStatus.innerHTML =
+                        '⚠️ No base URL set. QR codes will not work from other devices. Please set a valid web URL.';
+                }
+                checkProtocol();
+                if (!baseUrl && window.location.protocol === 'file:') {
+                    showQrBtn.disabled = true;
+                    showQrBtn.title = 'Set a base URL first';
+                } else if (baseUrl && (baseUrl.startsWith('http://') || baseUrl.startsWith('https://'))) {
+                    showQrBtn.disabled = false;
+                    showQrBtn.title = '';
+                } else if (baseUrl) {
+                    showQrBtn.disabled = true;
+                    showQrBtn.title = 'Invalid base URL (must start with http:// or https://)';
+                } else {
+                    showQrBtn.disabled = false;
+                    showQrBtn.title = '';
+                }
+            }
+
+            function saveBaseUrl() {
+                let url = baseUrlInput.value.trim();
+                if (url) {
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        alert('❌ URL must start with http:// or https://\n\nExample: https://myapp.com/directpay.html');
+                        return;
+                    }
+                    localStorage.setItem('base_url', url);
+                } else {
+                    localStorage.removeItem('base_url');
+                }
+                baseUrl = localStorage.getItem('base_url') || '';
+                updateSettingsUI();
+                settingsModal.classList.remove('active');
+                settingsModal.style.visibility = 'hidden';
+                settingsModal.style.opacity = '0';
+                checkProtocol();
+            }
+
+            // ===== QR PAGE =====
+            function openQRPage() {
+                const clientData = getClientData();
+                if (!clientData) {
+                    alert('Please register or log in first to generate your QR code.');
+                    return;
+                }
+
+                const storedBase = localStorage.getItem('base_url') || '';
+                let base = storedBase;
+                if (!base) {
+                    const currentUrl = window.location.href.split('?')[0].split('#')[0];
+                    if (currentUrl.startsWith('file://')) {
+                        alert(
+                            '❌ Cannot generate a working QR code from a file:// path.\n\nPlease set a Base URL in Settings (⚙️) first.\n\nYour QR must point to a web URL (http:// or https://) that is accessible from other devices.'
+                            );
+                        return;
+                    }
+                    base = currentUrl;
+                }
+
+                if (!base.startsWith('http://') && !base.startsWith('https://')) {
+                    alert('❌ Invalid base URL. Must start with http:// or https://\n\nPlease update it in Settings (⚙️).');
+                    return;
+                }
+
+                const name = (clientData.businessName || '').trim();
+                const identifier = (clientData.identifier || '').trim();
+                const baseClean = base.split('?')[0].split('#')[0];
+                const qrUrl = baseClean + '#qr_login=1&name=' + encodeURIComponent(name) + '&identifier=' + encodeURIComponent(
+                    identifier);
+
+                const qrWindow = window.open('', '_blank', 'width=520,height=680,scrollbars=yes');
+                if (!qrWindow) {
+                    alert('Please allow popups to view the QR code.');
+                    return;
+                }
+
+                qrWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8" />
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                            <title>DirectPay+ · My QR Code</title>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+                            <style>
+                                body { margin:0; background:#f8fafc; font-family:'Inter',system-ui,sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:1rem; }
+                                .qr-card { background:white; border-radius:1.5rem; box-shadow:0 20px 40px -12px rgba(0,0,0,0.2); padding:2rem; max-width:480px; width:100%; text-align:center; }
+                                .qr-card h2 { color:#0b2b3f; margin-bottom:0.25rem; }
+                                .qr-card p.sub { color:#64748b; font-size:0.8rem; margin-bottom:1rem; }
+                                .qr-container { background:white; padding:0.5rem; border-radius:1rem; display:inline-block; margin:0.5rem 0; }
+                                .user-info { background:#f1f5f9; border-radius:0.8rem; padding:0.5rem; font-size:0.8rem; margin:0.5rem 0; }
+                                .user-info span { font-weight:600; }
+                                .url-display { background:#f1f5f9; border-radius:0.5rem; padding:0.4rem; font-size:0.65rem; word-break:break-all; margin:0.5rem 0; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; gap:0.5rem; }
+                                .url-display .copy-btn { background:#e2e8f0; border:none; padding:0.2rem 0.6rem; border-radius:1rem; font-size:0.6rem; cursor:pointer; white-space:nowrap; }
+                                .url-display .copy-btn:hover { background:#d1d5db; }
+                                .actions { display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; margin-top:0.5rem; }
+                                .actions button { padding:0.4rem 1.2rem; border:none; border-radius:2rem; font-weight:600; font-size:0.8rem; cursor:pointer; }
+                                .btn-download { background:#0b2b3f; color:white; }
+                                .btn-close { background:#e2e8f0; color:#1e293b; }
+                                .footer-note { font-size:0.6rem; color:#94a3b8; margin-top:0.8rem; }
+                                .hosting-note { background:#fef3c7; border-radius:0.5rem; padding:0.4rem; font-size:0.6rem; color:#92400e; margin-top:0.6rem; }
+                                .match-badge { display:inline-block; font-size:0.6rem; padding:0.1rem 0.4rem; border-radius:1rem; font-weight:600; background:#d1fae5; color:#065f46; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="qr-card">
+                                <h2>📱 Your Login QR</h2>
+                                <p class="sub">Scan this QR code with your device camera to log in instantly</p>
+                                <div class="user-info">
+                                    <strong>Name:</strong> <span id="qrName">${name}</span><br />
+                                    <strong>Identifier:</strong> <span id="qrIdentifier">${identifier}</span>
+                                    <span class="match-badge">✅ ready</span>
+                                </div>
+                                <div class="qr-container" id="qrCodeContainer"></div>
+                                <div class="url-display">
+                                    <span id="qrUrlDisplay" style="flex:1;text-align:left;">${qrUrl}</span>
+                                    <button class="copy-btn" id="copyUrlBtn">📋 Copy</button>
+                                </div>
+                                <div class="actions">
+                                    <button class="btn-download" id="downloadQrBtn">⬇️ Download PNG</button>
+                                    <button class="btn-close" onclick="window.close()">✕ Close</button>
+                                </div>
+                                <div class="footer-note">Scan to open the login page with pre-filled credentials</div>
+                                <div class="hosting-note">
+                                    💡 The QR contains your exact name and identifier. If login fails, check that
+                                    the stored data matches the values shown above.
+                                </div>
+                            </div>
+                            <script>
+                                const container = document.getElementById('qrCodeContainer');
+                                const qrUrl = '${qrUrl}';
+                                new QRCode(container, {
+                                    text: qrUrl,
+                                    width: 200,
+                                    height: 200,
+                                    colorDark: "#0b2b3f",
+                                    colorLight: "#ffffff",
+                                    correctLevel: QRCode.CorrectLevel.H
+                                });
+                                document.getElementById('downloadQrBtn').addEventListener('click', function() {
+                                    const canvas = container.querySelector('canvas');
+                                    if (!canvas) return;
+                                    const link = document.createElement('a');
+                                    link.download = 'DirectPay_QR_${name.replace(/[^a-zA-Z0-9]/g,'_')}.png';
+                                    link.href = canvas.toDataURL('image/png');
+                                    link.click();
+                                });
+                                document.getElementById('copyUrlBtn').addEventListener('click', function() {
+                                    const url = document.getElementById('qrUrlDisplay').textContent;
+                                    navigator.clipboard.writeText(url).then(() => {
+                                        const btn = this;
+                                        btn.textContent = '✅ Copied!';
+                                        setTimeout(() => btn.textContent = '📋 Copy', 1500);
+                                    }).catch(() => {
+                                        const ta = document.createElement('textarea');
+                                        ta.value = url;
+                                        document.body.appendChild(ta);
+                                        ta.select();
+                                        document.execCommand('copy');
+                                        ta.remove();
+                                        const btn = this;
+                                        btn.textContent = '✅ Copied!';
+                                        setTimeout(() => btn.textContent = '📋 Copy', 1500);
+                                    });
+                                });
+                            <\/script>
+                        </body>
+                        </html>
+                    `);
+                qrWindow.document.close();
+            }
+
+            // ===== CHECK URL PARAMS FOR QR LOGIN =====
+            function checkQRParams() {
+                let qrLogin = null;
+                let name = null;
+                let identifier = null;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                qrLogin = urlParams.get('qr_login');
+                name = urlParams.get('name');
+                identifier = urlParams.get('identifier');
+
+                if (!qrLogin && window.location.hash) {
+                    const hashStr = window.location.hash.substring(1);
+                    const hashParams = new URLSearchParams(hashStr);
+                    qrLogin = hashParams.get('qr_login');
+                    name = hashParams.get('name');
+                    identifier = hashParams.get('identifier');
+                }
+
+                if (!qrLogin && window.location.href.includes('_login=1')) {
+                    const match = window.location.href.match(/[_?]login=1&name=([^&]+)&identifier=([^&]+)/);
+                    if (match) {
+                        name = decodeURIComponent(match[1]);
+                        identifier = decodeURIComponent(match[2]);
+                        qrLogin = '1';
+                    }
+                }
+
+                if (qrLogin === '1' && name && identifier) {
+                    const trimmedName = name.trim();
+                    const trimmedId = identifier.trim();
+                    loginNameField.value = trimmedName;
+                    loginNamePlaceholder.innerText = trimmedName;
+                    loginIdentifierField.value = trimmedId;
+                    qrLoginHint.classList.add('active');
+                    qrLoginHint.innerText =
+                    '📷 QR code detected! Your name and identifier have been pre‑filled.';
+                    loginModal.style.visibility = 'visible';
+                    loginModal.style.opacity = '1';
+                    loginModal.classList.add('active');
+                    mainContent.classList.add('blurred');
+                    hideLoginError();
+                    loginIdentifierError.innerText = '';
+                    return true;
+                }
+                return false;
+            }
+
+            // ===== LOGIN LOGIC =====
             function attemptLogin() {
                 hideLoginError();
+
+                const name = loginNameField.value.trim();
                 const identifier = loginIdentifierField.value.trim();
                 const clientData = getClientData();
 
                 if (!clientData) {
-                    showLoginError('No registered user found. Please register first.');
+                    showLoginError('❌ No registered user found. Please register first.');
                     return;
                 }
 
-                if (!identifier) {
-                    loginIdentifierError.innerText = 'Please enter your identifier.';
-                    return;
-                }
-                loginIdentifierError.innerText = '';
-
-                // Validate identifier format: 9 digits or 6 alphanumeric
-                const is9d = /^\d{9}$/.test(identifier);
-                const is6c = /^[A-Za-z0-9]{6}$/.test(identifier);
-                if (!is9d && !is6c) {
-                    loginIdentifierError.innerText = 'Must be 9 digits or 6 alphanumeric characters.';
+                if (!name || !identifier) {
+                    showLoginError('❌ Missing name or identifier. Please scan QR or enter details.');
                     return;
                 }
 
-                // Check if identifier matches saved data
-                if (identifier !== clientData.identifier) {
-                    showLoginError('❌ Identifier does not match our records. Please try again or register as a new user.');
+                const storedId = (clientData.identifier || '').trim();
+                const storedName = (clientData.businessName || '').trim();
+
+                if (identifier !== storedId) {
+                    const detail =
+                        `QR identifier: <code>${identifier}</code><br>Stored identifier: <code>${storedId}</code>`;
+                    showLoginError('❌ Identifier does not match our records.', detail);
                     return;
                 }
 
-                // --- LOGIN SUCCESS ---
+                if (name !== storedName) {
+                    const detail =
+                        `QR name: <code>${name}</code><br>Stored name: <code>${storedName}</code>`;
+                    showLoginError('❌ Name does not match our records.', detail);
+                    return;
+                }
+
                 hideLoginError();
                 loginModal.classList.remove('active');
                 loginModal.style.visibility = 'hidden';
@@ -1043,13 +1755,17 @@
                 mainContent.classList.remove('blurred');
                 fillForms(clientData);
                 if (!txField.value) txField.value = genTxId();
-                // Hide auto-fill button
-                autoFillRegBtn.style.display = 'none';
-                // Clear login fields for next time
-                loginIdentifierField.value = '';
+                qrLoginHint.classList.remove('active');
+
+                showFeedback('✅ Login successful! Welcome back, ' + name, 'success');
+
+                if (window.history && window.history.replaceState) {
+                    const cleanUrl = window.location.href.split('?')[0].split('#')[0];
+                    window.history.replaceState({}, document.title, cleanUrl);
+                }
             }
 
-            // ========== REGISTRATION LOGIC ==========
+            // ===== REGISTRATION LOGIC =====
             function validateReg() {
                 const biz = popupBiz.value.trim();
                 const addr = popupAddr.value.trim();
@@ -1059,6 +1775,7 @@
                 const pos = popupPos.value;
                 const cName = popupContactName.value.trim();
                 const cPhone = popupContactPhone.value.trim();
+                const txTypes = getSelectedTxTypes();
 
                 if (!biz || !addr || !email || !rec || !id || !pos || !cName || !cPhone) {
                     showPopupErr("All fields required.");
@@ -1080,13 +1797,21 @@
                 } else {
                     popupContactPhoneError.innerText = "";
                 }
+                if (txTypes.length === 0) {
+                    txTypesError.innerText = "Select at least one transaction type.";
+                    return false;
+                } else {
+                    txTypesError.innerText = "";
+                }
                 return true;
             }
 
             function completeRegistration() {
                 if (!validateReg()) return;
                 const serialNum = `SN-${String(serialCounter).padStart(5, '0')}`;
-                const clientData = {
+                const txTypes = getSelectedTxTypes();
+
+                const rawData = {
                     businessName: popupBiz.value.trim(),
                     address: popupAddr.value.trim(),
                     email: popupEmail.value.trim(),
@@ -1096,9 +1821,11 @@
                     contactName: popupContactName.value.trim(),
                     contactPhone: popupContactPhone.value.trim(),
                     serialNumber: serialNum,
+                    transactionTypes: txTypes,
                     registeredAt: new Date().toISOString()
                 };
-                saveClient(clientData);
+
+                const clientData = saveClient(rawData);
                 fillForms(clientData);
                 incrementSerial();
                 txField.value = genTxId();
@@ -1106,6 +1833,7 @@
                 mainContent.classList.remove('blurred');
                 autoFillRegBtn.style.display = 'none';
                 previousClientData = null;
+
                 // Reset popup fields
                 popupBiz.value = '';
                 popupAddr.value = '';
@@ -1116,7 +1844,12 @@
                 popupContactName.value = '';
                 popupContactPhone.value = '';
                 popupContactPhoneError.innerText = '';
+                const checkboxes = txCheckboxGrid.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = false);
+                updateSelectedTxDisplay([]);
+                txTypesError.innerText = '';
 
+                // Send to server
                 const fd = new FormData();
                 fd.append("type", "client_registration");
                 fd.append("business_name", clientData.businessName);
@@ -1128,10 +1861,17 @@
                 fd.append("contact_name", clientData.contactName);
                 fd.append("contact_phone", clientData.contactPhone);
                 fd.append("assigned_serial", clientData.serialNumber);
+                fd.append("transaction_types", JSON.stringify(clientData.transactionTypes));
                 fetch(REGISTRATION_ENDPOINT, { method: "POST", body: fd }).catch(e => console.log);
+
+                setTimeout(() => {
+                    if (confirm('✅ Registration successful! Would you like to view your QR code now?')) {
+                        openQRPage();
+                    }
+                }, 300);
             }
 
-            // ========== AUTO-FILL (for registration) ==========
+            // ===== AUTO-FILL =====
             function autoFillRegistration() {
                 if (!previousClientData) {
                     const tempMsg = document.createElement('div');
@@ -1150,7 +1890,6 @@
                     setTimeout(() => tempMsg.remove(), 2500);
                     return;
                 }
-
                 popupBiz.value = previousClientData.businessName || '';
                 popupAddr.value = previousClientData.address || '';
                 popupEmail.value = previousClientData.email || '';
@@ -1171,6 +1910,12 @@
                 }
                 if (!found) popupPos.selectedIndex = 0;
 
+                const txList = previousClientData.transactionTypes || [];
+                const checkboxes = txCheckboxGrid.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => { cb.checked = txList.includes(cb.value); });
+                updateSelectedTxDisplay(txList);
+                txTypesError.innerText = '';
+
                 if (idHint) idHint.innerText = "✓ Restored previous details";
                 popupContactPhoneError.innerText = "";
 
@@ -1190,10 +1935,10 @@
                 setTimeout(() => tempMsg.remove(), 2500);
             }
 
-            // ========== RESET ==========
+            // ===== RESET =====
             function resetMerchantOnly() {
                 amount.value = '';
-                transactionCat.value = '';
+                // Don't reset transactionCat here; it will be repopulated on login/register
                 transactionCatError.innerText = '';
                 agreeRadios.forEach(r => r.checked = false);
                 amountErr.innerText = '';
@@ -1215,15 +1960,10 @@
             function fullReset() {
                 if (isRegistered()) {
                     const saved = getClientData();
-                    if (saved) {
-                        previousClientData = saved;
-                    } else {
-                        previousClientData = null;
-                    }
+                    if (saved) { previousClientData = saved; } else { previousClientData = null; }
                 } else {
                     previousClientData = null;
                 }
-
                 clearClient();
                 mBiz.value = '';
                 mAddr.value = '';
@@ -1244,11 +1984,16 @@
                 dispRec.innerText = '—';
                 dispContactName.innerText = '—';
                 dispContactPhone.innerText = '—';
+                dispTxTypes.innerText = '—';
                 txField.value = '';
                 ussdArea.style.display = 'none';
                 feedback.style.display = 'none';
+                updateDebugData();
 
-                // Show registration modal (with auto-fill if available)
+                // Reset dropdown to default (empty)
+                populateCategoryDropdown([]);
+                transactionCat.selectedIndex = 0;
+
                 regModal.style.display = 'flex';
                 mainContent.classList.add('blurred');
                 loginModal.classList.remove('active');
@@ -1267,9 +2012,17 @@
                 receiptModal.classList.remove('active');
                 hideLoginError();
                 loginIdentifierField.value = '';
+                loginNameField.value = '';
+                loginNamePlaceholder.innerText = 'User';
+                qrLoginHint.classList.remove('active');
+
+                const checkboxes = txCheckboxGrid.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = false);
+                updateSelectedTxDisplay([]);
+                txTypesError.innerText = '';
             }
 
-            // ========== USSD ==========
+            // ===== USSD =====
             function buildUssd() {
                 const phone = mId.value.trim();
                 const amtVal = amount.value.trim();
@@ -1299,7 +2052,7 @@
                     dialNow(code); } else ussdArea.style.display = 'none';
             }
 
-            // ========== RECEIPT ==========
+            // ===== RECEIPT =====
             function buildReceiptHTML(data) {
                 const now = new Date().toLocaleString();
                 return `
@@ -1384,7 +2137,7 @@
                 });
             }
 
-            // ========== PAY ==========
+            // ===== PAY =====
             async function processPay() {
                 feedback.style.display = 'none';
                 ussdArea.style.display = 'none';
@@ -1472,13 +2225,12 @@
                     pay.disabled = false; }
             }
 
-            // ========== SWITCH BETWEEN LOGIN & REGISTRATION ==========
+            // ===== SWITCH MODALS =====
             function showLoginModal() {
                 regModal.style.display = 'none';
                 loginModal.style.visibility = 'visible';
                 loginModal.style.opacity = '1';
                 loginModal.classList.add('active');
-                // Pre-fill name if client data exists
                 const data = getClientData();
                 if (data) {
                     loginNameField.value = data.businessName || '';
@@ -1497,19 +2249,16 @@
                 loginModal.style.visibility = 'hidden';
                 loginModal.style.opacity = '0';
                 regModal.style.display = 'flex';
-                // If we have previous data, show auto-fill button
                 if (previousClientData) {
                     autoFillRegBtn.style.display = 'inline-block';
                     autoFillRegBtn.innerText = '⚡ Auto-Fill Previous Details';
                 } else {
                     autoFillRegBtn.style.display = 'none';
                 }
-                // Clear registration fields except maybe auto-fill
-                // but don't clear if we want to keep what's there
                 hideLoginError();
             }
 
-            // ========== POLICY ==========
+            // ===== POLICY =====
             showPolicyBtn.onclick = () => policyModal.classList.add('active');
             policyOk.onclick = () => {
                 policyOkFlag = true;
@@ -1518,76 +2267,77 @@
                 policyModal.classList.remove('active');
             };
 
-            // ========== EVENT BINDING ==========
-            // Login
-            loginBtn.onclick = attemptLogin;
-            loginIdentifierField.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') attemptLogin();
-                if (loginIdentifierField.value.trim()) loginIdentifierError.innerText = '';
-            });
-            loginIdentifierField.oninput = () => {
-                const v = loginIdentifierField.value.trim();
-                if (v.length > 0 && !/^\d{9}$/.test(v) && !/^[A-Za-z0-9]{6}$/.test(v)) {
-                    loginIdentifierError.innerText = "9 digits or 6 alphanumeric.";
-                } else {
-                    loginIdentifierError.innerText = "";
-                }
-                hideLoginError();
+            // ===== SETTINGS =====
+            openSettingsBtn.onclick = () => {
+                updateSettingsUI();
+                settingsModal.style.visibility = 'visible';
+                settingsModal.style.opacity = '1';
+                settingsModal.classList.add('active');
+            };
+            closeSettingsBtn.onclick = () => {
+                settingsModal.classList.remove('active');
+                settingsModal.style.visibility = 'hidden';
+                settingsModal.style.opacity = '0';
+            };
+            saveSettingsBtn.onclick = saveBaseUrl;
+            baseUrlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveBaseUrl(); });
+            fixProtocolBtn.onclick = () => {
+                settingsModal.style.visibility = 'visible';
+                settingsModal.style.opacity = '1';
+                settingsModal.classList.add('active');
+                updateSettingsUI();
             };
 
-            // Switch: Login → Register
+            // ===== DEBUG =====
+            debugToggleBtn.onclick = () => {
+                debugDataDisplay.classList.toggle('active');
+                updateDebugData();
+            };
+
+            // ===== EVENT BINDING =====
+            loginBtn.onclick = attemptLogin;
+            loginIdentifierField.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptLogin(); });
+
             switchToRegisterFromLogin.onclick = () => {
-                // Capture current client data as "previous" for auto-fill
                 const data = getClientData();
                 if (data) previousClientData = data;
                 showRegistrationModal();
             };
+            switchToLoginFromRegister.onclick = showLoginModal;
 
-            // Switch: Register → Login
-            switchToLoginFromRegister.onclick = () => {
-                showLoginModal();
-            };
-
-            // Registration
             regBtn.onclick = completeRegistration;
             autoFillRegBtn.onclick = autoFillRegistration;
-
-            // Reset
             resetAllBtn.onclick = fullReset;
+            showQrBtn.onclick = openQRPage;
 
-            // Transaction ID
             genTx.onclick = () => { txField.value = genTxId();
                 txErr.innerText = "";
                 showFeedback("New TX ID generated", "info"); };
-
-            // Release
             release.onclick = handleRelease;
 
-            // USSD copy/dial
             copyUssd.onclick = () => {
-                if (ussdCodeSpan.innerText) { navigator.clipboard.writeText(ussdCodeSpan.innerText);
+                if (ussdCodeSpan.innerText) {
+                    navigator.clipboard.writeText(ussdCodeSpan.innerText);
                     copyUssd.innerText = "✅ Copied!";
-                    setTimeout(() => copyUssd.innerText = "📋 Copy", 1500); }
+                    setTimeout(() => copyUssd.innerText = "📋 Copy", 1500);
+                }
             };
-            dialUssd.onclick = () => { if (ussdCodeSpan.innerText) dialNow(ussdCodeSpan.innerText);
-                else showFeedback("No USSD", "error"); };
+            dialUssd.onclick = () => {
+                if (ussdCodeSpan.innerText) dialNow(ussdCodeSpan.innerText);
+                else showFeedback("No USSD", "error");
+            };
 
-            // Pay
             pay.onclick = processPay;
-
-            // Receipt
             sendReceiptSmsBtn.onclick = sendReceiptSms;
             copyReceiptBtn.onclick = copyReceipt;
             closeReceiptBtn.onclick = () => receiptModal.classList.remove('active');
 
-            // Amount validation
             amount.oninput = () => {
                 if (amount.value && parseInt(amount.value) > 0) amountErr.innerText = "";
                 else if (amount.value) amountErr.innerText = "Positive number";
                 else amountErr.innerText = "";
             };
 
-            // Identifier validation in registration
             popupId.oninput = () => {
                 const v = popupId.value.trim();
                 if (/^\d{9}$/.test(v)) idHint.innerText = "✓ Valid phone";
@@ -1605,18 +2355,18 @@
                 }
             };
 
-            transactionCat.onchange = () => {
-                if (transactionCat.value) transactionCatError.innerText = '';
-            };
-
-            // ========== INITIALIZATION ==========
+            // ===== INITIALIZATION =====
             loadSerial();
+            initTxCheckboxes();
 
-            // Determine which modal to show on load
+            const isFileProtocol = checkProtocol();
+            updateSettingsUI();
+            updateDebugData();
+
+            const qrDetected = checkQRParams();
             const clientData = getClientData();
 
-            if (clientData) {
-                // User exists → show login with pre-filled name
+            if (clientData && !qrDetected) {
                 loginNameField.value = clientData.businessName || '';
                 loginNamePlaceholder.innerText = clientData.businessName || 'User';
                 loginModal.style.visibility = 'visible';
@@ -1624,20 +2374,16 @@
                 loginModal.classList.add('active');
                 regModal.style.display = 'none';
                 mainContent.classList.add('blurred');
-                // Hide auto-fill button
                 autoFillRegBtn.style.display = 'none';
-                // Pre-fill merchant fields with saved data (but keep blurred)
                 fillForms(clientData);
                 if (!txField.value) txField.value = genTxId();
-            } else {
-                // No user → show registration
+            } else if (!clientData && !qrDetected) {
                 loginModal.classList.remove('active');
                 loginModal.style.visibility = 'hidden';
                 loginModal.style.opacity = '0';
                 regModal.style.display = 'flex';
                 mainContent.classList.add('blurred');
                 autoFillRegBtn.style.display = 'none';
-                // Clear merchant fields
                 mBiz.value = '';
                 mAddr.value = '';
                 mId.value = '';
@@ -1653,13 +2399,19 @@
                 dispRec.innerText = '—';
                 dispContactName.innerText = '—';
                 dispContactPhone.innerText = '—';
+                dispTxTypes.innerText = '—';
                 txField.value = '';
+                // Populate dropdown with fallback (empty)
+                populateCategoryDropdown([]);
             }
 
-            // Additional: if user clicks on main content when blurred, bring up login
-            // This is a nice UX touch - but we'll keep it simple
-
-            console.log('DirectPay+ loaded. Login flow active.');
+            console.log('DirectPay+ with auto-populated transaction category loaded.');
+            if (qrDetected) {
+                console.log('🔍 QR login detected, pre-filled credentials.');
+            }
+            if (isFileProtocol) {
+                console.log('📌 Please set a base URL in settings and host the file on a web server.');
+            }
         })();
     </script>
 
