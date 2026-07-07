@@ -23,18 +23,21 @@
             padding: 0.8rem;
             padding-bottom: 80px;
             overflow-x: hidden;
+            padding-top: 0; /* will be managed by main-content padding */
         }
 
         @media (min-width: 640px) {
             body {
                 padding: 1rem;
                 padding-bottom: 85px;
+                padding-top: 0;
             }
         }
         @media (min-width: 1024px) {
             body {
                 padding: 2rem 1.5rem;
                 padding-bottom: 90px;
+                padding-top: 0;
             }
         }
 
@@ -49,6 +52,14 @@
             border-radius: 1.5rem;
             padding: 0.1rem;
             position: relative;
+            /* top padding to account for fixed header */
+            padding-top: 130px; /* default, will be adjusted by JS if needed */
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding-top: 110px;
+            }
         }
 
         .main-content.blurred {
@@ -57,15 +68,18 @@
             user-select: none;
         }
 
-        /* ── STICKY HEADER ── */
+        /* ── FIXED HEADER (no scroll) ── */
         .sticky-header {
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
-            margin: 0 -0.1rem;
+            left: 0;
+            right: 0;
+            z-index: 1000;
             padding: 0.1rem;
             background: transparent;
             transition: box-shadow 0.3s ease;
+            overflow: hidden; /* no scroll inside header */
+            max-height: 100vh; /* prevent overflow */
         }
 
         .sticky-header.scrolled {
@@ -84,6 +98,7 @@
             flex-wrap: wrap;
             border-radius: 1.5rem 1.5rem 0 0;
             box-shadow: 0 2px 20px rgba(11, 43, 63, 0.15);
+            overflow: hidden; /* no scroll inside */
         }
 
         .sticky-header .hero-section .hero-left {
@@ -2648,7 +2663,7 @@
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content blurred" id="mainContent">
 
-        <!-- ===== STICKY HEADER ===== -->
+        <!-- ===== FIXED HEADER (sticky, no scroll) ===== -->
         <div class="sticky-header" id="stickyHeader">
             <div class="hero-section">
                 <div class="hero-left">
@@ -5605,7 +5620,7 @@
             setTimeout(adjustBodyPadding, 300);
 
             // ================================================================
-            //  STICKY HEADER SHADOW ON SCROLL
+            //  STICKY HEADER SHADOW ON SCROLL – now just for shadow effect
             // ================================================================
             const stickyHeader = document.getElementById('stickyHeader');
             if (stickyHeader) {
