@@ -21,17 +21,20 @@
             background: linear-gradient(135deg, #eef2f7 0%, #d4dfed 100%);
             min-height: 100vh;
             padding: 0.8rem;
+            padding-bottom: 80px;
             overflow-x: hidden;
         }
 
         @media (min-width: 640px) {
             body {
                 padding: 1rem;
+                padding-bottom: 85px;
             }
         }
         @media (min-width: 1024px) {
             body {
                 padding: 2rem 1.5rem;
+                padding-bottom: 90px;
             }
         }
 
@@ -45,6 +48,7 @@
             background-position: center;
             border-radius: 1.5rem;
             padding: 0.1rem;
+            position: relative;
         }
 
         .main-content.blurred {
@@ -53,19 +57,24 @@
             user-select: none;
         }
 
-        .main-content .front-card {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(2px);
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
-            overflow: hidden;
-            width: 100%;
-            transition: background 0.3s;
+        /* ── STICKY HEADER ── */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin: 0 -0.1rem;
+            padding: 0.1rem;
+            background: transparent;
+            transition: box-shadow 0.3s ease;
         }
 
-        .hero-section {
+        .sticky-header.scrolled {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .sticky-header .hero-section {
             background: linear-gradient(135deg, #0b2b3f, #1a4a6e);
-            padding: 1rem;
+            padding: 0.8rem 1rem;
             color: white;
             text-align: center;
             display: flex;
@@ -73,15 +82,17 @@
             justify-content: center;
             gap: 0.5rem;
             flex-wrap: wrap;
+            border-radius: 1.5rem 1.5rem 0 0;
+            box-shadow: 0 2px 20px rgba(11, 43, 63, 0.15);
         }
 
-        .hero-section .hero-left {
+        .sticky-header .hero-section .hero-left {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .hero-avatar-wrapper {
+        .sticky-header .hero-avatar-wrapper {
             position: relative;
             display: inline-flex;
             align-items: center;
@@ -90,21 +101,28 @@
             height: 2.6rem;
             border-radius: 50%;
             flex-shrink: 0;
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             overflow: hidden;
             transition: background 0.2s;
         }
 
-        .hero-avatar-wrapper .profile-emoji { font-size: 1.5rem; line-height: 1; }
-        .hero-avatar-wrapper .profile-image {
+        .sticky-header .hero-avatar-wrapper .profile-emoji {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .sticky-header .hero-avatar-wrapper .profile-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: none;
         }
-        .hero-avatar-wrapper .profile-image.active { display: block; }
-        .hero-avatar-wrapper .profile-emoji.hidden { display: none; }
-        .online-dot {
+        .sticky-header .hero-avatar-wrapper .profile-image.active {
+            display: block;
+        }
+        .sticky-header .hero-avatar-wrapper .profile-emoji.hidden {
+            display: none;
+        }
+        .sticky-header .online-dot {
             position: absolute;
             bottom: -2px;
             right: -2px;
@@ -114,18 +132,23 @@
             border-radius: 50%;
             border: 2px solid #0b2b3f;
             display: none;
-            box-shadow: 0 0 0 2px rgba(34,197,94,0.3);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
             transition: background 0.3s;
         }
-        .online-dot.active {
+        .sticky-header .online-dot.active {
             display: block;
             animation: pulse-dot 2s ease-in-out infinite;
         }
         @keyframes pulse-dot {
-            0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
-            50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+            }
         }
-        .hero-section h1 {
+        .sticky-header .hero-section h1 {
             font-size: 1.3rem;
             word-break: break-word;
             display: flex;
@@ -133,36 +156,191 @@
             gap: 0.4rem;
             flex-wrap: wrap;
         }
-        .hero-section h1 .brand-name { font-weight: 700; }
-        .hero-section h1 .brand-sub { font-weight: 400; opacity: 0.7; font-size: 0.75em; }
-        .hero-section .hero-status {
+        .sticky-header .hero-section h1 .brand-name {
+            font-weight: 700;
+        }
+        .sticky-header .hero-section h1 .brand-sub {
+            font-weight: 400;
+            opacity: 0.7;
+            font-size: 0.75em;
+        }
+        .sticky-header .hero-section .hero-status {
             font-size: 0.6rem;
-            background: rgba(34,197,94,0.2);
+            background: rgba(34, 197, 94, 0.2);
             color: #86efac;
             padding: 0.1rem 0.6rem;
             border-radius: 1rem;
             display: none;
             white-space: nowrap;
-            border: 1px solid rgba(34,197,94,0.3);
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
-        .hero-section .hero-status.active { display: inline-block; }
-        .hero-section p { font-size: 0.75rem; opacity: 0.8; width: 100%; margin-top: 0.1rem; }
-        @media (min-width: 640px) {
-            .hero-section { padding: 1.2rem; }
-            .hero-avatar-wrapper { width: 3rem; height: 3rem; }
-            .hero-avatar-wrapper .profile-emoji { font-size: 1.8rem; }
-            .online-dot { width: 16px; height: 16px; }
-            .hero-section h1 { font-size: 1.6rem; }
-            .hero-section .hero-status { font-size: 0.7rem; padding: 0.15rem 0.8rem; }
+        .sticky-header .hero-section .hero-status.active {
+            display: inline-block;
         }
-        @media (min-width: 1024px) {
-            .hero-section { padding: 1.8rem 2rem; }
-            .hero-avatar-wrapper { width: 3.6rem; height: 3.6rem; }
-            .hero-avatar-wrapper .profile-emoji { font-size: 2.2rem; }
-            .online-dot { width: 18px; height: 18px; bottom: -3px; right: -3px; }
-            .hero-section h1 { font-size: 2rem; }
+        .sticky-header .hero-section p {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            width: 100%;
+            margin-top: 0.1rem;
         }
 
+        /* Hero Actions (Client/Merchant/Chat buttons) */
+        .sticky-header .hero-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .sticky-header .hero-actions .header-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 0.3rem 1.2rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+        }
+
+        .sticky-header .hero-actions .header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .sticky-header .hero-actions .header-btn.active {
+            background: white;
+            color: #0b2b3f;
+            border-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .sticky-header .hero-actions .header-btn.active:hover {
+            background: #f1f5f9;
+        }
+
+        .sticky-header .hero-actions .header-btn.chat-btn {
+            position: relative;
+        }
+
+        .sticky-header .hero-actions .header-btn .chat-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 0.05rem 0.4rem;
+            border-radius: 1rem;
+            border: 2px solid #0b2b3f;
+            min-width: 20px;
+            text-align: center;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .sticky-header .hero-actions .header-btn .chat-badge.active {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .sticky-header .hero-actions {
+                gap: 0.5rem;
+            }
+            .sticky-header .hero-actions .header-btn {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.8rem;
+                gap: 0.2rem;
+            }
+            .sticky-header .hero-section {
+                padding: 0.5rem 0.6rem;
+            }
+            .sticky-header .hero-section h1 {
+                font-size: 1.1rem;
+            }
+            .sticky-header .hero-avatar-wrapper {
+                width: 2.2rem;
+                height: 2.2rem;
+            }
+            .sticky-header .hero-avatar-wrapper .profile-emoji {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (min-width: 640px) {
+            .sticky-header .hero-section {
+                padding: 1rem 1.2rem;
+            }
+            .sticky-header .hero-avatar-wrapper {
+                width: 3rem;
+                height: 3rem;
+            }
+            .sticky-header .hero-avatar-wrapper .profile-emoji {
+                font-size: 1.8rem;
+            }
+            .sticky-header .online-dot {
+                width: 16px;
+                height: 16px;
+            }
+            .sticky-header .hero-section h1 {
+                font-size: 1.6rem;
+            }
+            .sticky-header .hero-section .hero-status {
+                font-size: 0.7rem;
+                padding: 0.15rem 0.8rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .sticky-header .hero-section {
+                padding: 1.5rem 2rem;
+            }
+            .sticky-header .hero-avatar-wrapper {
+                width: 3.6rem;
+                height: 3.6rem;
+            }
+            .sticky-header .hero-avatar-wrapper .profile-emoji {
+                font-size: 2.2rem;
+            }
+            .sticky-header .online-dot {
+                width: 18px;
+                height: 18px;
+                bottom: -3px;
+                right: -3px;
+            }
+            .sticky-header .hero-section h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* ── Scrollable Content ── */
+        .scrollable-content {
+            padding: 0 0.1rem 0.1rem 0.1rem;
+            background: transparent;
+        }
+
+        .front-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 0 0 1.5rem 1.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        /* ── protocol warning ── */
         .protocol-warning-banner {
             background: #fee2e2;
             border: 2px solid #dc2626;
@@ -173,7 +351,9 @@
             color: #7f1d1d;
             display: none;
         }
-        .protocol-warning-banner strong { color: #dc2626; }
+        .protocol-warning-banner strong {
+            color: #dc2626;
+        }
         .protocol-warning-banner .btn-fix {
             background: #dc2626;
             color: white;
@@ -185,7 +365,9 @@
             font-size: 0.65rem;
             margin-left: 0.3rem;
         }
-        .protocol-warning-banner .btn-fix:hover { background: #b91c1c; }
+        .protocol-warning-banner .btn-fix:hover {
+            background: #b91c1c;
+        }
 
         .two-col-grid {
             display: grid;
@@ -194,24 +376,43 @@
             padding: 1rem;
         }
         @media (min-width: 900px) {
-            .two-col-grid { grid-template-columns: 1fr 1.2fr; gap: 1.5rem; padding: 1.5rem; }
+            .two-col-grid {
+                grid-template-columns: 1fr 1.2fr;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
         }
         @media (min-width: 1200px) {
-            .two-col-grid { gap: 2rem; padding: 2rem; }
+            .two-col-grid {
+                gap: 2rem;
+                padding: 2rem;
+            }
         }
 
-        .client-panel, .merchant-panel {
-            background: rgba(255,255,255,0.85);
+        .client-panel,
+        .merchant-panel {
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(2px);
             border-radius: 1.2rem;
             padding: 1rem;
-            border: 1px solid rgba(226,237,247,0.5);
+            border: 1px solid rgba(226, 237, 247, 0.5);
             overflow-x: hidden;
-            transition: background 0.3s;
+            transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
+        }
+
+        .client-panel.hidden,
+        .merchant-panel.hidden {
+            display: none;
+        }
+
+        .client-panel.transition,
+        .merchant-panel.transition {
+            opacity: 0;
+            transform: scale(0.97);
         }
 
         .info-card {
-            background: rgba(241,245,249,0.7);
+            background: rgba(241, 245, 249, 0.7);
             border-radius: 1rem;
             padding: 0.8rem;
             margin-top: 0.8rem;
@@ -219,7 +420,9 @@
             word-break: break-word;
             backdrop-filter: blur(2px);
         }
-        .info-card p { margin: 0.4rem 0; }
+        .info-card p {
+            margin: 0.4rem 0;
+        }
         .info-card .debug-row {
             font-size: 0.7rem;
             color: #475569;
@@ -241,8 +444,12 @@
             gap: 0.3rem;
             width: 100%;
         }
-        .form-group label { font-weight: 600; font-size: 0.75rem; }
-        input, select {
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        input,
+        select {
             padding: 0.6rem 0.7rem;
             border: 1.5px solid #e2e8f0;
             border-radius: 0.9rem;
@@ -251,11 +458,20 @@
             max-width: 100%;
         }
         @media (min-width: 640px) {
-            .form-group { margin-bottom: 1rem; }
-            .form-group label { font-size: 0.8rem; }
-            input, select { padding: 0.7rem 0.8rem; font-size: 0.85rem; }
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            .form-group label {
+                font-size: 0.8rem;
+            }
+            input,
+            select {
+                padding: 0.7rem 0.8rem;
+                font-size: 0.85rem;
+            }
         }
-        input.readonly-field, select.readonly-field {
+        input.readonly-field,
+        select.readonly-field {
             background-color: #f1f5f9;
             cursor: not-allowed;
         }
@@ -299,15 +515,40 @@
             text-align: center;
             white-space: nowrap;
         }
-        .btn-grid .btn-sm.pay { background: #f97316; color: white; }
-        .btn-grid .btn-sm.release { background: #2c7da0; color: white; }
-        .btn-grid .btn-sm.qr { background: #0b2b3f; color: white; }
-        .btn-grid .btn-sm.qr:hover { background: #1a4a6e; }
-        .btn-grid .btn-sm.reset { background: #e2e8f0; color: #1e293b; }
-        .btn-grid .btn-sm.settings { background: #f1f5f9; color: #1e293b; border: 1px solid #d1d5db; }
-        .btn-grid .btn-sm.settings:hover { background: #e2e8f0; }
-        .btn-grid .btn-sm.edit { background: #8b5cf6; color: white; }
-        .btn-grid .btn-sm.edit:hover { background: #7c3aed; }
+        .btn-grid .btn-sm.pay {
+            background: #f97316;
+            color: white;
+        }
+        .btn-grid .btn-sm.release {
+            background: #2c7da0;
+            color: white;
+        }
+        .btn-grid .btn-sm.qr {
+            background: #0b2b3f;
+            color: white;
+        }
+        .btn-grid .btn-sm.qr:hover {
+            background: #1a4a6e;
+        }
+        .btn-grid .btn-sm.reset {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .btn-grid .btn-sm.settings {
+            background: #f1f5f9;
+            color: #1e293b;
+            border: 1px solid #d1d5db;
+        }
+        .btn-grid .btn-sm.settings:hover {
+            background: #e2e8f0;
+        }
+        .btn-grid .btn-sm.edit {
+            background: #8b5cf6;
+            color: white;
+        }
+        .btn-grid .btn-sm.edit:hover {
+            background: #7c3aed;
+        }
         .btn-grid .btn-sm.gen-id {
             background: #8b5cf6;
             color: white;
@@ -315,7 +556,9 @@
             padding: 0.35rem 0.8rem;
             font-size: 0.65rem;
         }
-        .btn-grid .btn-sm.gen-id:hover { background: #7c3aed; }
+        .btn-grid .btn-sm.gen-id:hover {
+            background: #7c3aed;
+        }
         .btn-grid .btn-sm.send-receipt {
             background: #059669;
             color: white;
@@ -323,9 +566,20 @@
             padding: 0.35rem 0.8rem;
             font-size: 0.65rem;
         }
-        .btn-grid .btn-sm.send-receipt:hover { background: #047857; }
+        .btn-grid .btn-sm.send-receipt:hover {
+            background: #047857;
+        }
 
-        .pay-button, .release-button, .gen-id-button, .reset-btn, .send-receipt-btn, .show-qr-btn, .settings-btn, .edit-page-btn { display: none; }
+        .pay-button,
+        .release-button,
+        .gen-id-button,
+        .reset-btn,
+        .send-receipt-btn,
+        .show-qr-btn,
+        .settings-btn,
+        .edit-page-btn {
+            display: none;
+        }
 
         .ussd-output {
             background: #f1f5f9;
@@ -336,7 +590,8 @@
             word-break: break-all;
         }
 
-        .copy-btn, .dial-btn {
+        .copy-btn,
+        .dial-btn {
             background: #e2e8f0;
             border: none;
             padding: 0.3rem 0.7rem;
@@ -347,13 +602,18 @@
         }
 
         /* ── Modals ── */
-        .policy-modal-overlay, .modal-overlay, .receipt-modal-overlay, .login-modal-overlay, .settings-modal-overlay, .edit-modal-overlay {
+        .policy-modal-overlay,
+        .modal-overlay,
+        .receipt-modal-overlay,
+        .login-modal-overlay,
+        .settings-modal-overlay,
+        .edit-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -363,12 +623,22 @@
             opacity: 0;
             transition: visibility 0.2s, opacity 0.2s;
         }
-        .policy-modal-overlay.active, .modal-overlay[style*="display: flex"], .receipt-modal-overlay.active, .login-modal-overlay.active, .settings-modal-overlay.active, .edit-modal-overlay.active {
+        .policy-modal-overlay.active,
+        .modal-overlay[style*="display: flex"],
+        .receipt-modal-overlay.active,
+        .login-modal-overlay.active,
+        .settings-modal-overlay.active,
+        .edit-modal-overlay.active {
             visibility: visible;
             opacity: 1;
         }
 
-        .policy-modal, .registration-modal, .receipt-modal, .login-modal, .settings-modal, .edit-modal {
+        .policy-modal,
+        .registration-modal,
+        .receipt-modal,
+        .login-modal,
+        .settings-modal,
+        .edit-modal {
             background: white;
             border-radius: 1.5rem;
             max-width: 550px;
@@ -376,7 +646,9 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        .receipt-modal { max-width: 600px; }
+        .receipt-modal {
+            max-width: 600px;
+        }
 
         .modal-header {
             background: linear-gradient(135deg, #0b2b3f, #1a4a6e);
@@ -385,8 +657,12 @@
             text-align: center;
         }
 
-        .modal-body { padding: 1rem; }
-        .modal-footer { padding: 0.8rem 1rem 1rem; }
+        .modal-body {
+            padding: 1rem;
+        }
+        .modal-footer {
+            padding: 0.8rem 1rem 1rem;
+        }
 
         .btn-register {
             background: #f97316;
@@ -410,7 +686,9 @@
             cursor: pointer;
             font-size: 1rem;
         }
-        .btn-login:hover { background: #1a4a6e; }
+        .btn-login:hover {
+            background: #1a4a6e;
+        }
 
         .btn-switch-modal {
             background: transparent;
@@ -423,10 +701,20 @@
             margin-top: 0.5rem;
             display: inline-block;
         }
-        .btn-switch-modal:hover { color: #f97316; }
+        .btn-switch-modal:hover {
+            color: #f97316;
+        }
 
-        .error-text { color: #dc2626; font-size: 0.65rem; margin-top: 0.2rem; }
-        button, input, select { max-width: 100%; }
+        .error-text {
+            color: #dc2626;
+            font-size: 0.65rem;
+            margin-top: 0.2rem;
+        }
+        button,
+        input,
+        select {
+            max-width: 100%;
+        }
 
         .inline-flex {
             display: flex;
@@ -490,9 +778,19 @@
             padding: 0.25rem 0;
             border-bottom: 1px solid #e2e8f0;
         }
-        .receipt-content .row:last-child { border-bottom: none; }
-        .receipt-content .label { font-weight: 600; color: #475569; }
-        .receipt-content .value { color: #0f172a; text-align: right; max-width: 60%; word-break: break-word; }
+        .receipt-content .row:last-child {
+            border-bottom: none;
+        }
+        .receipt-content .label {
+            font-weight: 600;
+            color: #475569;
+        }
+        .receipt-content .value {
+            color: #0f172a;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
 
         .receipt-actions {
             display: flex;
@@ -509,14 +807,25 @@
             font-size: 0.8rem;
             cursor: pointer;
         }
-        .btn-sms { background: #059669; color: white; }
-        .btn-copy-receipt { background: #3b82f6; color: white; }
-        .btn-close-receipt { background: #e2e8f0; color: #1e293b; }
+        .btn-sms {
+            background: #059669;
+            color: white;
+        }
+        .btn-copy-receipt {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-close-receipt {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
         .btn-whatsapp {
             background: #25D366;
             color: white;
         }
-        .btn-whatsapp:hover { background: #1da851; }
+        .btn-whatsapp:hover {
+            background: #1da851;
+        }
 
         /* ── Animated App Store Banner ── */
         .app-store-banner {
@@ -562,7 +871,8 @@
             transform: translateX(4px);
         }
         @keyframes appStorePulse {
-            0%, 100% {
+            0%,
+            100% {
                 box-shadow: 0 4px 15px rgba(11, 43, 63, 0.3);
                 transform: scale(1);
             }
@@ -586,7 +896,11 @@
             margin-bottom: 0.8rem;
         }
 
-        .login-avatar { font-size: 3rem; text-align: center; margin-bottom: 0.25rem; }
+        .login-avatar {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 0.25rem;
+        }
         .login-welcome {
             text-align: center;
             font-size: 1.2rem;
@@ -613,7 +927,9 @@
             width: 100%;
             margin-bottom: 0.75rem;
         }
-        .auto-fill-btn:hover { background: #bae6fd; }
+        .auto-fill-btn:hover {
+            background: #bae6fd;
+        }
 
         .login-error-box {
             background: #fee2e2;
@@ -642,7 +958,9 @@
             color: #92400e;
             margin-bottom: 0.5rem;
         }
-        .qr-login-hint.active { display: block; }
+        .qr-login-hint.active {
+            display: block;
+        }
 
         .tx-checkbox-grid {
             display: grid;
@@ -669,7 +987,9 @@
             flex-shrink: 0;
         }
         @media (max-width: 480px) {
-            .tx-checkbox-grid { grid-template-columns: 1fr 1fr; }
+            .tx-checkbox-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         .selected-tx-list {
@@ -692,16 +1012,27 @@
             color: #475569;
             margin-bottom: 0.5rem;
         }
-        .settings-modal .form-group input { font-size: 0.8rem; }
+        .settings-modal .form-group input {
+            font-size: 0.8rem;
+        }
         .base-url-status {
             font-size: 0.7rem;
             margin-top: 0.3rem;
             padding: 0.3rem;
             border-radius: 0.5rem;
         }
-        .base-url-status.warning { background: #fef3c7; color: #92400e; }
-        .base-url-status.success { background: #d1fae5; color: #065f46; }
-        .base-url-status.error { background: #fee2e2; color: #991b1b; }
+        .base-url-status.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .base-url-status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .base-url-status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
         .btn-save-settings {
             background: #0b2b3f;
             color: white;
@@ -712,7 +1043,9 @@
             width: 100%;
             cursor: pointer;
         }
-        .btn-save-settings:hover { background: #1a4a6e; }
+        .btn-save-settings:hover {
+            background: #1a4a6e;
+        }
 
         .settings-help {
             background: #f8fafc;
@@ -752,7 +1085,9 @@
             cursor: pointer;
             white-space: nowrap;
         }
-        .url-display-box .copy-url-btn:hover { background: #d1d5db; }
+        .url-display-box .copy-url-btn:hover {
+            background: #d1d5db;
+        }
 
         .qr-container {
             background: white;
@@ -771,7 +1106,9 @@
             text-decoration: underline;
             margin-top: 0.2rem;
         }
-        .debug-toggle-btn:hover { color: #1e293b; }
+        .debug-toggle-btn:hover {
+            color: #1e293b;
+        }
         .debug-data {
             display: none;
             background: #f8fafc;
@@ -784,8 +1121,13 @@
             max-height: 100px;
             overflow-y: auto;
         }
-        .debug-data.active { display: block; }
-        .debug-data code { font-family: monospace; font-size: 0.6rem; }
+        .debug-data.active {
+            display: block;
+        }
+        .debug-data code {
+            font-family: monospace;
+            font-size: 0.6rem;
+        }
 
         .match-badge {
             display: inline-block;
@@ -794,8 +1136,14 @@
             border-radius: 1rem;
             font-weight: 600;
         }
-        .match-badge.yes { background: #d1fae5; color: #065f46; }
-        .match-badge.no { background: #fee2e2; color: #991b1b; }
+        .match-badge.yes {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .match-badge.no {
+            background: #fee2e2;
+            color: #991b1b;
+        }
 
         .auto-populate-note {
             font-size: 0.6rem;
@@ -826,12 +1174,16 @@
             transition: background 0.15s, border-color 0.15s;
             line-height: 1.4;
         }
-        .emoji-picker-grid .emoji-option:hover { background: #e2e8f0; }
+        .emoji-picker-grid .emoji-option:hover {
+            background: #e2e8f0;
+        }
         .emoji-picker-grid .emoji-option.selected {
             border-color: #0b2b3f;
             background: #dbeafe;
         }
-        .emoji-picker-grid .emoji-option input[type="radio"] { display: none; }
+        .emoji-picker-grid .emoji-option input[type="radio"] {
+            display: none;
+        }
         .emoji-picker-grid .emoji-option label {
             display: block;
             cursor: pointer;
@@ -864,7 +1216,9 @@
             display: none;
             border: 3px solid #0b2b3f;
         }
-        .profile-upload-area .upload-preview.active { display: block; }
+        .profile-upload-area .upload-preview.active {
+            display: block;
+        }
         .profile-upload-area .upload-placeholder {
             font-size: 2.4rem;
             color: #94a3b8;
@@ -876,7 +1230,9 @@
             background: #e2e8f0;
             border-radius: 50%;
         }
-        .profile-upload-area .upload-placeholder.hidden { display: none; }
+        .profile-upload-area .upload-placeholder.hidden {
+            display: none;
+        }
         .profile-upload-area .upload-label {
             font-size: 0.75rem;
             font-weight: 600;
@@ -888,8 +1244,12 @@
             cursor: pointer;
             transition: background 0.15s;
         }
-        .profile-upload-area .upload-label:hover { background: #e2e8f0; }
-        .profile-upload-area input[type="file"] { display: none; }
+        .profile-upload-area .upload-label:hover {
+            background: #e2e8f0;
+        }
+        .profile-upload-area input[type="file"] {
+            display: none;
+        }
         .profile-upload-area .upload-remove {
             font-size: 0.6rem;
             color: #dc2626;
@@ -899,7 +1259,9 @@
             text-decoration: underline;
             padding: 0.1rem 0.4rem;
         }
-        .profile-upload-area .upload-remove:hover { color: #991b1b; }
+        .profile-upload-area .upload-remove:hover {
+            color: #991b1b;
+        }
 
         .info-card .profile-avatar-display {
             width: 48px;
@@ -911,22 +1273,30 @@
             border: 2px solid #0b2b3f;
             flex-shrink: 0;
         }
-        .info-card .profile-avatar-display.active { display: inline-block; }
+        .info-card .profile-avatar-display.active {
+            display: inline-block;
+        }
         .info-card .profile-emoji-display {
             font-size: 1.6rem;
             display: inline-block;
             margin-right: 0.3rem;
             vertical-align: middle;
         }
-        .info-card .profile-emoji-display.hidden { display: none; }
+        .info-card .profile-emoji-display.hidden {
+            display: none;
+        }
         .info-card .profile-row {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             flex-wrap: wrap;
         }
-        .info-card .profile-row .label { font-weight: 600; }
-        .info-card .profile-row .name-wrap { font-weight: 600; }
+        .info-card .profile-row .label {
+            font-weight: 600;
+        }
+        .info-card .profile-row .name-wrap {
+            font-weight: 600;
+        }
 
         .edit-modal .modal-body .setting-group {
             display: flex;
@@ -950,8 +1320,13 @@
             cursor: pointer;
             background: none;
         }
-        .edit-modal .modal-body .setting-group input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        .edit-modal .modal-body .setting-group input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+        .edit-modal .modal-body .setting-group input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .edit-modal .modal-body .setting-group input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
         .edit-modal .modal-body .setting-group .btn-icon {
             background: #e2e8f0;
             border: none;
@@ -966,12 +1341,16 @@
             min-width: 32px;
             text-align: center;
         }
-        .edit-modal .modal-body .setting-group .btn-icon:hover { background: #d1d5db; }
+        .edit-modal .modal-body .setting-group .btn-icon:hover {
+            background: #d1d5db;
+        }
         .edit-modal .modal-body .setting-group .btn-icon.reset-btn {
             background: #fee2e2;
             color: #dc2626;
         }
-        .edit-modal .modal-body .setting-group .btn-icon.reset-btn:hover { background: #fecaca; }
+        .edit-modal .modal-body .setting-group .btn-icon.reset-btn:hover {
+            background: #fecaca;
+        }
         .edit-modal .modal-body .setting-group .value-display {
             min-width: 40px;
             text-align: center;
@@ -990,8 +1369,12 @@
             color: #0b2b3f;
             font-weight: 500;
         }
-        .edit-modal .modal-body .bg-upload-label:hover { background: #e2e8f0; }
-        .edit-modal .modal-body input[type="file"] { display: none; }
+        .edit-modal .modal-body .bg-upload-label:hover {
+            background: #e2e8f0;
+        }
+        .edit-modal .modal-body input[type="file"] {
+            display: none;
+        }
         .edit-modal .modal-body .preview-box {
             margin-top: 0.5rem;
             padding: 0.5rem;
@@ -1033,54 +1416,18 @@
             background: #e2e8f0;
             color: #1e293b;
         }
-        .edit-modal .modal-footer .btn-close-edit:hover { background: #d1d5db; }
+        .edit-modal .modal-footer .btn-close-edit:hover {
+            background: #d1d5db;
+        }
         .edit-modal .modal-footer .btn-reset-all {
             background: #fee2e2;
             color: #dc2626;
         }
-        .edit-modal .modal-footer .btn-reset-all:hover { background: #fecaca; }
+        .edit-modal .modal-footer .btn-reset-all:hover {
+            background: #fecaca;
+        }
 
         /* ── Chat styles ── */
-        .chat-fab {
-            position: fixed;
-            bottom: 1.5rem;
-            left: 1.5rem;
-            z-index: 3000;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0b2b3f, #1a4a6e);
-            color: white;
-            border: none;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .chat-fab:hover {
-            transform: scale(1.06);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.45);
-        }
-        .chat-fab .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #ef4444;
-            color: white;
-            font-size: 0.6rem;
-            font-weight: 700;
-            padding: 0.15rem 0.45rem;
-            border-radius: 1rem;
-            border: 2px solid white;
-            min-width: 22px;
-            text-align: center;
-            display: none;
-        }
-        .chat-fab .badge.active { display: block; }
-
         .chat-overlay {
             position: fixed;
             bottom: 5.5rem;
@@ -1092,17 +1439,25 @@
             max-height: calc(100vh - 8rem);
             background: white;
             border-radius: 1.2rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
             display: none;
             flex-direction: column;
             overflow: hidden;
             animation: slideUp 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
-        .chat-overlay.open { display: flex; }
+        .chat-overlay.open {
+            display: flex;
+        }
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px) scale(0.96); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
         @media (max-width: 480px) {
             .chat-overlay {
@@ -1114,13 +1469,6 @@
                 height: calc(100vh - 7rem);
                 max-height: calc(100vh - 7rem);
                 border-radius: 1rem;
-            }
-            .chat-fab {
-                width: 52px;
-                height: 52px;
-                font-size: 1.5rem;
-                bottom: 1rem;
-                left: 1rem;
             }
         }
 
@@ -1156,7 +1504,7 @@
             gap: 0.3rem;
         }
         .chat-header .header-actions button {
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             border: none;
             color: white;
             width: 30px;
@@ -1169,14 +1517,16 @@
             justify-content: center;
             transition: background 0.2s;
         }
-        .chat-header .header-actions button:hover { background: rgba(255,255,255,0.3); }
+        .chat-header .header-actions button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
 
         .chat-user-dropdown {
             position: relative;
             display: inline-block;
         }
         .chat-user-dropdown .dropdown-toggle {
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             border: none;
             color: white;
             padding: 0.2rem 0.7rem;
@@ -1192,15 +1542,20 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .chat-user-dropdown .dropdown-toggle:hover { background: rgba(255,255,255,0.22); }
-        .chat-user-dropdown .dropdown-toggle .arrow { font-size: 0.5rem; margin-left: 0.2rem; }
+        .chat-user-dropdown .dropdown-toggle:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+        .chat-user-dropdown .dropdown-toggle .arrow {
+            font-size: 0.5rem;
+            margin-left: 0.2rem;
+        }
         .chat-user-dropdown .dropdown-menu {
             position: absolute;
             top: calc(100% + 6px);
             right: 0;
             background: white;
             border-radius: 0.8rem;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
             min-width: 200px;
             max-width: 260px;
             max-height: 260px;
@@ -1210,7 +1565,9 @@
             z-index: 100;
             border: 1px solid #e2e8f0;
         }
-        .chat-user-dropdown .dropdown-menu.open { display: block; }
+        .chat-user-dropdown .dropdown-menu.open {
+            display: block;
+        }
         .chat-user-dropdown .dropdown-menu .user-item {
             display: flex;
             align-items: center;
@@ -1221,7 +1578,9 @@
             font-size: 0.8rem;
             color: #1e293b;
         }
-        .chat-user-dropdown .dropdown-menu .user-item:hover { background: #f1f5f9; }
+        .chat-user-dropdown .dropdown-menu .user-item:hover {
+            background: #f1f5f9;
+        }
         .chat-user-dropdown .dropdown-menu .user-item .user-avatar {
             width: 32px;
             height: 32px;
@@ -1253,8 +1612,12 @@
             border-radius: 50%;
             flex-shrink: 0;
         }
-        .chat-user-dropdown .dropdown-menu .user-item .user-status.online { background: #22c55e; }
-        .chat-user-dropdown .dropdown-menu .user-item .user-status.offline { background: #94a3b8; }
+        .chat-user-dropdown .dropdown-menu .user-item .user-status.online {
+            background: #22c55e;
+        }
+        .chat-user-dropdown .dropdown-menu .user-item .user-status.offline {
+            background: #94a3b8;
+        }
 
         .chat-messages {
             flex: 1;
@@ -1291,7 +1654,7 @@
             background: white;
             color: #1e293b;
             border-bottom-left-radius: 0.25rem;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
         .chat-messages .msg .msg-time {
             font-size: 0.55rem;
@@ -1320,11 +1683,24 @@
             margin-top: 0.2rem;
             max-height: 200px;
         }
-        .chat-messages .msg .msg-emoji { font-size: 2rem; line-height: 1.2; }
-        .chat-messages .msg .msg-icon { font-size: 2.4rem; display: inline-block; line-height: 1.2; }
+        .chat-messages .msg .msg-emoji {
+            font-size: 2rem;
+            line-height: 1.2;
+        }
+        .chat-messages .msg .msg-icon {
+            font-size: 2.4rem;
+            display: inline-block;
+            line-height: 1.2;
+        }
         @keyframes msgIn {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         .chat-messages .typing-indicator {
             align-self: flex-start;
@@ -1334,9 +1710,11 @@
             font-size: 0.7rem;
             color: #94a3b8;
             display: none;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
-        .chat-messages .typing-indicator.active { display: block; }
+        .chat-messages .typing-indicator.active {
+            display: block;
+        }
 
         .chat-taskbar {
             display: flex;
@@ -1371,8 +1749,13 @@
             background: none;
             flex-shrink: 0;
         }
-        .chat-taskbar .taskbar-group input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        .chat-taskbar .taskbar-group input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+        .chat-taskbar .taskbar-group input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .chat-taskbar .taskbar-group input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
         .chat-taskbar .taskbar-group .btn-icon {
             background: #e2e8f0;
             border: none;
@@ -1387,12 +1770,16 @@
             min-width: 22px;
             text-align: center;
         }
-        .chat-taskbar .taskbar-group .btn-icon:hover { background: #d1d5db; }
+        .chat-taskbar .taskbar-group .btn-icon:hover {
+            background: #d1d5db;
+        }
         .chat-taskbar .taskbar-group .btn-icon.reset-btn {
             background: #fee2e2;
             color: #dc2626;
         }
-        .chat-taskbar .taskbar-group .btn-icon.reset-btn:hover { background: #fecaca; }
+        .chat-taskbar .taskbar-group .btn-icon.reset-btn:hover {
+            background: #fecaca;
+        }
         .chat-taskbar .taskbar-group .value-display {
             min-width: 24px;
             text-align: center;
@@ -1411,8 +1798,12 @@
             color: #0b2b3f;
             line-height: 1.6;
         }
-        .chat-taskbar .bg-upload-label:hover { background: #e2e8f0; }
-        .chat-taskbar input[type="file"] { display: none; }
+        .chat-taskbar .bg-upload-label:hover {
+            background: #e2e8f0;
+        }
+        .chat-taskbar input[type="file"] {
+            display: none;
+        }
 
         .chat-toolbar {
             display: flex;
@@ -1439,7 +1830,9 @@
             line-height: 1;
             position: relative;
         }
-        .chat-toolbar .tool-btn:hover { background: #f1f5f9; }
+        .chat-toolbar .tool-btn:hover {
+            background: #f1f5f9;
+        }
         .chat-toolbar .tool-btn .tool-label {
             font-size: 0.5rem;
             position: absolute;
@@ -1454,7 +1847,9 @@
             display: none;
             font-weight: 400;
         }
-        .chat-toolbar .tool-btn:hover .tool-label { display: block; }
+        .chat-toolbar .tool-btn:hover .tool-label {
+            display: block;
+        }
 
         .chat-input-row {
             display: flex;
@@ -1475,7 +1870,9 @@
             transition: border-color 0.2s;
             min-width: 0;
         }
-        .chat-input-row input:focus { border-color: #0b2b3f; }
+        .chat-input-row input:focus {
+            border-color: #0b2b3f;
+        }
         .chat-input-row .send-btn {
             background: #0b2b3f;
             color: white;
@@ -1488,7 +1885,9 @@
             transition: background 0.2s;
             white-space: nowrap;
         }
-        .chat-input-row .send-btn:hover { background: #1a4a6e; }
+        .chat-input-row .send-btn:hover {
+            background: #1a4a6e;
+        }
 
         .recording-indicator {
             display: none;
@@ -1501,7 +1900,9 @@
             color: #dc2626;
             font-weight: 600;
         }
-        .recording-indicator.active { display: inline-flex; }
+        .recording-indicator.active {
+            display: inline-flex;
+        }
         .recording-indicator .rec-dot {
             width: 10px;
             height: 10px;
@@ -1516,14 +1917,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
             z-index: 4000;
             display: none;
             align-items: center;
             justify-content: center;
         }
-        .emoji-library-overlay.open { display: flex; }
+        .emoji-library-overlay.open {
+            display: flex;
+        }
         .emoji-library {
             background: white;
             border-radius: 1.2rem;
@@ -1544,9 +1947,12 @@
             align-items: center;
             flex-shrink: 0;
         }
-        .emoji-library .lib-header h4 { font-weight: 600; font-size: 0.95rem; }
+        .emoji-library .lib-header h4 {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
         .emoji-library .lib-header .lib-close {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: white;
             width: 30px;
@@ -1581,7 +1987,9 @@
             background: #0b2b3f;
             color: white;
         }
-        .emoji-library .lib-body .lib-tabs .tab:hover:not(.active) { background: #e2e8f0; }
+        .emoji-library .lib-body .lib-tabs .tab:hover:not(.active) {
+            background: #e2e8f0;
+        }
         .emoji-library .lib-body .lib-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
@@ -1609,14 +2017,14 @@
             background: linear-gradient(145deg, #f8fafc, #e2e8f0);
             border-radius: 0.6rem;
             padding: 0.3rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: box-shadow 0.2s, transform 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .emoji-library .lib-body .lib-grid .item.icon-3d:hover {
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             transform: scale(1.08) rotate(-2deg);
         }
         .emoji-library .lib-body .lib-grid .item.icon-3d .icon-inner {
@@ -1624,17 +2032,400 @@
             line-height: 1;
         }
 
-        .chat-messages::-webkit-scrollbar, .emoji-library .lib-body .lib-grid::-webkit-scrollbar, .chat-user-dropdown .dropdown-menu::-webkit-scrollbar {
+        .chat-messages::-webkit-scrollbar,
+        .emoji-library .lib-body .lib-grid::-webkit-scrollbar,
+        .chat-user-dropdown .dropdown-menu::-webkit-scrollbar {
             width: 4px;
         }
-        .chat-messages::-webkit-scrollbar-track, .emoji-library .lib-body .lib-grid::-webkit-scrollbar-track, .chat-user-dropdown .dropdown-menu::-webkit-scrollbar-track {
+        .chat-messages::-webkit-scrollbar-track,
+        .emoji-library .lib-body .lib-grid::-webkit-scrollbar-track,
+        .chat-user-dropdown .dropdown-menu::-webkit-scrollbar-track {
             background: transparent;
         }
-        .chat-messages::-webkit-scrollbar-thumb, .emoji-library .lib-body .lib-grid::-webkit-scrollbar-thumb, .chat-user-dropdown .dropdown-menu::-webkit-scrollbar-thumb {
+        .chat-messages::-webkit-scrollbar-thumb,
+        .emoji-library .lib-body .lib-grid::-webkit-scrollbar-thumb,
+        .chat-user-dropdown .dropdown-menu::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 1rem;
         }
-        .chat-messages::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* ────────────────────────────────────────────── */
+        /*  NEW FOOTER STYLES (unchanged)                */
+        /* ────────────────────────────────────────────── */
+        .app-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1500;
+            background: linear-gradient(135deg, #0b2b3f 0%, #1a4a6e 100%);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.4rem 0.3rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.25);
+            min-height: 64px;
+        }
+
+        .app-footer .footer-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.1rem;
+            padding: 0.15rem 0.4rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 0.6rem;
+            min-width: 48px;
+            position: relative;
+            flex: 1;
+            max-width: 72px;
+        }
+
+        .app-footer .footer-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+        .app-footer .footer-btn:active {
+            transform: scale(0.94);
+        }
+
+        .app-footer .footer-btn .footer-icon {
+            font-size: 1.2rem;
+            line-height: 1.2;
+            transition: transform 0.2s;
+        }
+        .app-footer .footer-btn:hover .footer-icon {
+            transform: scale(1.1);
+        }
+
+        .app-footer .footer-btn .footer-label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .app-footer .footer-btn:hover .footer-label {
+            opacity: 1;
+        }
+
+        .app-footer .footer-btn .footer-badge {
+            position: absolute;
+            top: -4px;
+            right: 2px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.45rem;
+            font-weight: 700;
+            padding: 0.04rem 0.35rem;
+            border-radius: 1rem;
+            border: 1.5px solid #0b2b3f;
+            min-width: 16px;
+            text-align: center;
+            display: none;
+        }
+        .app-footer .footer-btn .footer-badge.active {
+            display: block;
+        }
+
+        @media (min-width: 640px) {
+            .app-footer {
+                padding: 0.5rem 0.8rem;
+                min-height: 70px;
+            }
+            .app-footer .footer-btn {
+                min-width: 56px;
+                max-width: 84px;
+                padding: 0.2rem 0.5rem;
+            }
+            .app-footer .footer-btn .footer-icon {
+                font-size: 1.4rem;
+            }
+            .app-footer .footer-btn .footer-label {
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .app-footer {
+                padding: 0.6rem 2rem;
+                min-height: 76px;
+            }
+            .app-footer .footer-btn {
+                min-width: 64px;
+                max-width: 96px;
+                padding: 0.25rem 0.6rem;
+            }
+            .app-footer .footer-btn .footer-icon {
+                font-size: 1.5rem;
+            }
+            .app-footer .footer-btn .footer-label {
+                font-size: 0.65rem;
+            }
+        }
+
+        /* ── Footer Modal Overrides ── */
+        .footer-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.25s, opacity 0.25s;
+        }
+        .footer-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .footer-modal {
+            background: white;
+            border-radius: 1.5rem;
+            max-width: 480px;
+            width: 92%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .footer-modal .modal-header {
+            background: linear-gradient(135deg, #0b2b3f, #1a4a6e);
+            color: white;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            border-radius: 1.5rem 1.5rem 0 0;
+        }
+        .footer-modal .modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .footer-modal .modal-header p {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 0.1rem;
+        }
+
+        .footer-modal .modal-body {
+            padding: 1rem 1.2rem;
+        }
+
+        .footer-modal .modal-footer {
+            padding: 0.6rem 1rem 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .footer-modal .modal-footer .btn-close-modal {
+            background: #e2e8f0;
+            color: #1e293b;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .footer-modal .modal-footer .btn-close-modal:hover {
+            background: #d1d5db;
+        }
+
+        /* Contacts list */
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .contacts-list .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 0.6rem 0.9rem;
+            border-radius: 1rem;
+            border: 1px solid #e2e8f0;
+            transition: background 0.15s, border-color 0.15s;
+            cursor: pointer;
+        }
+        .contacts-list .contact-item:hover {
+            background: #f1f5f9;
+            border-color: #0b2b3f;
+        }
+        .contacts-list .contact-item .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .contacts-list .contact-item .contact-info .contact-emoji {
+            font-size: 1.4rem;
+        }
+        .contacts-list .contact-item .contact-info .contact-number {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #0b2b3f;
+            letter-spacing: 0.3px;
+        }
+        .contacts-list .contact-item .contact-info .contact-label {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .contacts-list .contact-item .contact-dial {
+            background: #0b2b3f;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .contacts-list .contact-item .contact-dial:hover {
+            background: #1a4a6e;
+        }
+
+        /* Social icons */
+        .social-grid {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            padding: 0.5rem 0;
+        }
+        .social-grid .social-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            color: #1e293b;
+            transition: transform 0.2s;
+            padding: 0.5rem 0.8rem;
+            border-radius: 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            min-width: 80px;
+        }
+        .social-grid .social-link:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        .social-grid .social-link .social-icon {
+            font-size: 2.2rem;
+        }
+        .social-grid .social-link .social-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .social-grid .social-link.facebook .social-icon {
+            color: #1877f2;
+        }
+        .social-grid .social-link.telegram .social-icon {
+            color: #0088cc;
+        }
+        .social-grid .social-link.instagram .social-icon {
+            color: #e4405f;
+        }
+        .social-grid .social-link.facebook:hover {
+            background: #e7f0ff;
+            border-color: #1877f2;
+        }
+        .social-grid .social-link.telegram:hover {
+            background: #e0f2ff;
+            border-color: #0088cc;
+        }
+        .social-grid .social-link.instagram:hover {
+            background: #ffe7ec;
+            border-color: #e4405f;
+        }
+
+        /* Developer bio */
+        .dev-bio {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+        .dev-bio .dev-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0b2b3f;
+        }
+        .dev-bio .dev-title {
+            font-weight: 600;
+            color: #1a4a6e;
+        }
+        .dev-bio .dev-highlight {
+            background: #fef3c7;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.3rem;
+            font-weight: 500;
+        }
+        .dev-bio .dev-section {
+            margin-top: 0.6rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .dev-bio .dev-section strong {
+            color: #0b2b3f;
+        }
+        .dev-bio .dev-emoji {
+            font-size: 1.2rem;
+        }
+
+        /* How To button - special styling */
+        .footer-btn.how-to .footer-icon {
+            color: #fcd34d;
+        }
+        .footer-btn.how-to:hover .footer-icon {
+            color: #fbbf24;
+        }
+
+        /* Footer responsive adjustments for chat FAB */
+        @media (max-width: 480px) {
+            .app-footer .footer-btn .footer-label {
+                font-size: 0.5rem;
+            }
+            .app-footer .footer-btn {
+                min-width: 40px;
+                max-width: 60px;
+            }
+            .app-footer .footer-btn .footer-icon {
+                font-size: 1rem;
+            }
+            .footer-modal {
+                width: 96%;
+                max-height: 80vh;
+            }
+            .social-grid .social-link {
+                min-width: 64px;
+                padding: 0.4rem 0.5rem;
+            }
+            .social-grid .social-link .social-icon {
+                font-size: 1.8rem;
+            }
+            .contacts-list .contact-item .contact-info .contact-number {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1839,7 +2630,6 @@
             </div>
             <div class="modal-body" id="receiptBody"></div>
             <div class="modal-footer">
-                <!-- Animated App Store Banner (inside modal footer) -->
                 <a href="https://aminejalloh-io.github.io/NUSAPPSTORE/" target="_blank" rel="noopener noreferrer" class="app-store-banner" id="appStoreBanner">
                     <span class="banner-icon">📲</span>
                     <span class="banner-text">Get the App – NUSAPPSTORE</span>
@@ -1857,7 +2647,9 @@
 
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content blurred" id="mainContent">
-        <div class="front-card" id="frontCard">
+
+        <!-- ===== STICKY HEADER ===== -->
+        <div class="sticky-header" id="stickyHeader">
             <div class="hero-section">
                 <div class="hero-left">
                     <div class="hero-avatar-wrapper" id="heroAvatarWrapper">
@@ -1872,131 +2664,145 @@
                     </h1>
                 </div>
                 <p id="heroSubText">Serial assigned • Transaction ID • USSD</p>
+
+                <!-- Client, Merchant, Chat buttons -->
+                <div class="hero-actions">
+                    <button class="header-btn client-btn active" id="clientToggleBtn" data-panel="client">👤 Client</button>
+                    <button class="header-btn merchant-btn active" id="merchantToggleBtn" data-panel="merchant">🏢 Merchant</button>
+                    <button class="header-btn chat-btn" id="headerChatBtn" aria-label="Open chat">
+                        💬 <span class="chat-badge" id="headerChatBadge">3</span>
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <div class="two-col-grid">
-                <div class="client-panel">
-                    <h3>🔐 Registered User</h3>
-                    <div class="info-card">
-                        <div class="profile-row">
-                            <span class="label">Profile:</span>
-                            <img class="profile-avatar-display" id="displayProfileImage" src="#" alt="Profile" />
-                            <span class="profile-emoji-display" id="displayProfileEmoji">👤</span>
-                            <span class="name-wrap" id="displayBizName">—</span>
-                        </div>
-                        <p><strong>Address:</strong> <span id="displayAddress">—</span></p>
-                        <p><strong>Identifier:</strong> <span id="displayIdentifier">—</span></p>
-                        <p><strong>Occupation:</strong> <span id="displayPosition">—</span></p>
-                        <p><strong>Recipient:</strong> <span id="displayRecipientName">—</span></p>
-                        <p><strong>Contact Person:</strong> <span id="displayContactName">—</span></p>
-                        <p><strong>Contact Phone:</strong> <span id="displayContactPhone">—</span></p>
-                        <p><strong>Accepted Tx Types:</strong> <span id="displayTxTypes" style="font-weight:400;">—</span></p>
+        <!-- ===== SCROLLABLE CONTENT ===== -->
+        <div class="scrollable-content">
+            <div class="front-card" id="frontCard">
+                <div class="two-col-grid">
+                    <div class="client-panel" id="clientPanel">
+                        <h3>🔐 Registered User</h3>
+                        <div class="info-card">
+                            <div class="profile-row">
+                                <span class="label">Profile:</span>
+                                <img class="profile-avatar-display" id="displayProfileImage" src="#" alt="Profile" />
+                                <span class="profile-emoji-display" id="displayProfileEmoji">👤</span>
+                                <span class="name-wrap" id="displayBizName">—</span>
+                            </div>
+                            <p><strong>Address:</strong> <span id="displayAddress">—</span></p>
+                            <p><strong>Identifier:</strong> <span id="displayIdentifier">—</span></p>
+                            <p><strong>Occupation:</strong> <span id="displayPosition">—</span></p>
+                            <p><strong>Recipient:</strong> <span id="displayRecipientName">—</span></p>
+                            <p><strong>Contact Person:</strong> <span id="displayContactName">—</span></p>
+                            <p><strong>Contact Phone:</strong> <span id="displayContactPhone">—</span></p>
+                            <p><strong>Accepted Tx Types:</strong> <span id="displayTxTypes" style="font-weight:400;">—</span></p>
 
-                        <div class="debug-row">
-                            <button class="debug-toggle-btn" id="debugToggleBtn">🔍 Show stored data</button>
-                            <div class="debug-data" id="debugDataDisplay">
-                                <code id="debugDataContent">No data</code>
+                            <div class="debug-row">
+                                <button class="debug-toggle-btn" id="debugToggleBtn">🔍 Show stored data</button>
+                                <div class="debug-data" id="debugDataDisplay">
+                                    <code id="debugDataContent">No data</code>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="btn-grid">
-                        <button class="btn-sm qr" id="showQrBtn">QR Code</button>
-                        <button class="btn-sm reset" id="resetRegistrationBtn">Reset Client</button>
-                        <button class="btn-sm settings" id="openSettingsBtn">Base URL</button>
-                        <button class="btn-sm edit" id="editPageBtn">Edit Page</button>
-                    </div>
-                </div>
-
-                <div class="merchant-panel">
-                    <h3>📄 User Details</h3>
-
-                    <div class="form-group">
-                        <label>User name</label>
-                        <input type="text" id="merchantBizName" class="readonly-field" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" id="merchantAddress" class="readonly-field" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label>Identifier</label>
-                        <input type="text" id="merchantIdentifier" class="readonly-field" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label>Occupation</label>
-                        <input type="text" id="merchantPosition" class="readonly-field" readonly />
-                    </div>
-
-                    <div class="form-group">
-                        <label>👤 Contact Person</label>
-                        <input type="text" id="merchantContactName" class="readonly-field" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label>📞 Contact Phone</label>
-                        <input type="text" id="merchantContactPhone" class="readonly-field" readonly />
-                    </div>
-
-                    <div class="form-group">
-                        <label>🔢 Serial Number</label>
-                        <input type="text" id="serialNumberField" class="readonly-field" readonly value="--" />
-                    </div>
-
-                    <div class="form-group">
-                        <label>💰 Amount (Le) *</label>
-                        <input type="number" id="amountInput" placeholder="Enter amount" />
-                        <div id="amountError" class="error-text"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>📝 Recipient Name *</label>
-                        <input type="text" id="recipientNameField" class="readonly-field" readonly placeholder="Auto-filled" />
-                    </div>
-
-                    <div class="form-group">
-                        <label>📂 Transaction Category *</label>
-                        <select id="transactionCategory">
-                            <option value="" disabled selected>– Select transaction category –</option>
-                        </select>
-                        <div id="transactionCategoryError" class="error-text"></div>
-                        <div class="auto-populate-note">✅ Options are auto‑populated from your accepted transaction types</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>🔖 Transaction ID <span style="color:#dc2626;">*</span></label>
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <input type="text" id="transactionIdField" class="readonly-field" readonly style="flex:1;" />
-                            <button id="generateIdBtn" class="btn-sm gen-id" style="margin-top:0;">Generate</button>
-                        </div>
-                        <div id="txIdError" class="error-text"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>📄 Transaction agreement</label>
-                        <div class="radio-group-row">
-                            <label><input type="radio" name="transactionAgreement" value="Yes" /> ✅ Yes</label>
-                            <label><input type="radio" name="transactionAgreement" value="No" /> ❌ No</label>
+                        <div class="btn-grid">
+                            <button class="btn-sm qr" id="showQrBtn">QR Code</button>
+                            <button class="btn-sm reset" id="resetRegistrationBtn">Reset Client</button>
+                            <button class="btn-sm settings" id="openSettingsBtn">Base URL</button>
+                            <button class="btn-sm edit" id="editPageBtn">Edit Page</button>
                         </div>
                     </div>
 
-                    <div class="policy-confirm-area">
-                        <button id="showPolicyBtn" style="background:#1e293b; color:white; border:none; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.7rem; cursor:pointer;">📜 Policy</button>
-                        <span id="policyStatusMsg" style="color:#b91c1c; font-size:0.7rem;">⚠️ Not confirmed</span>
-                    </div>
+                    <div class="merchant-panel" id="merchantPanel">
+                        <h3>📄 User Details</h3>
 
-                    <div class="btn-grid">
-                        <button class="btn-sm release" id="releaseFundsBtn">Release Funds</button>
-                        <button class="btn-sm pay" id="payBtn">Pay</button>
-                    </div>
+                        <div class="form-group">
+                            <label>User name</label>
+                            <input type="text" id="merchantBizName" class="readonly-field" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" id="merchantAddress" class="readonly-field" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>Identifier</label>
+                            <input type="text" id="merchantIdentifier" class="readonly-field" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>Occupation</label>
+                            <input type="text" id="merchantPosition" class="readonly-field" readonly />
+                        </div>
 
-                    <div id="ussdOutputArea" style="display:none;" class="ussd-output">
-                        <strong>USSD Code:</strong><br />
-                        <code id="ussdCodeText" style="word-break:break-all;"></code><br />
-                        <button id="copyUssdBtn" class="copy-btn">📋 Copy</button>
-                        <button id="dialUssdBtn" class="dial-btn">📞 Dial</button>
-                    </div>
+                        <div class="form-group">
+                            <label>👤 Contact Person</label>
+                            <input type="text" id="merchantContactName" class="readonly-field" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>📞 Contact Phone</label>
+                            <input type="text" id="merchantContactPhone" class="readonly-field" readonly />
+                        </div>
 
-                    <div id="merchantFeedback" style="display:none; margin-top:0.8rem; padding:0.6rem; border-radius:1rem; font-size:0.75rem;"></div>
+                        <div class="form-group">
+                            <label>🔢 Serial Number</label>
+                            <input type="text" id="serialNumberField" class="readonly-field" readonly value="--" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>💰 Amount (Le) *</label>
+                            <input type="number" id="amountInput" placeholder="Enter amount" />
+                            <div id="amountError" class="error-text"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>📝 Recipient Name *</label>
+                            <input type="text" id="recipientNameField" class="readonly-field" readonly placeholder="Auto-filled" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>📂 Transaction Category *</label>
+                            <select id="transactionCategory">
+                                <option value="" disabled selected>– Select transaction category –</option>
+                            </select>
+                            <div id="transactionCategoryError" class="error-text"></div>
+                            <div class="auto-populate-note">✅ Options are auto‑populated from your accepted transaction types</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>🔖 Transaction ID <span style="color:#dc2626;">*</span></label>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <input type="text" id="transactionIdField" class="readonly-field" readonly style="flex:1;" />
+                                <button id="generateIdBtn" class="btn-sm gen-id" style="margin-top:0;">Generate</button>
+                            </div>
+                            <div id="txIdError" class="error-text"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>📄 Transaction agreement</label>
+                            <div class="radio-group-row">
+                                <label><input type="radio" name="transactionAgreement" value="Yes" /> ✅ Yes</label>
+                                <label><input type="radio" name="transactionAgreement" value="No" /> ❌ No</label>
+                            </div>
+                        </div>
+
+                        <div class="policy-confirm-area">
+                            <button id="showPolicyBtn" style="background:#1e293b; color:white; border:none; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.7rem; cursor:pointer;">📜 Policy</button>
+                            <span id="policyStatusMsg" style="color:#b91c1c; font-size:0.7rem;">⚠️ Not confirmed</span>
+                        </div>
+
+                        <div class="btn-grid">
+                            <button class="btn-sm release" id="releaseFundsBtn">Release Funds</button>
+                            <button class="btn-sm pay" id="payBtn">Pay</button>
+                        </div>
+
+                        <div id="ussdOutputArea" style="display:none;" class="ussd-output">
+                            <strong>USSD Code:</strong><br />
+                            <code id="ussdCodeText" style="word-break:break-all;"></code><br />
+                            <button id="copyUssdBtn" class="copy-btn">📋 Copy</button>
+                            <button id="dialUssdBtn" class="dial-btn">📞 Dial</button>
+                        </div>
+
+                        <div id="merchantFeedback" style="display:none; margin-top:0.8rem; padding:0.6rem; border-radius:1rem; font-size:0.75rem;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2044,12 +2850,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ===== CHAT FAB BUTTON ===== -->
-    <button class="chat-fab" id="chatFab" aria-label="Open chat">
-        💬
-        <span class="badge" id="chatBadge">3</span>
-    </button>
 
     <!-- ===== CHAT OVERLAY ===== -->
     <div class="chat-overlay" id="chatOverlay">
@@ -2133,6 +2933,166 @@
                     <button class="tab" data-tab="icons">🎨 3D Icons</button>
                 </div>
                 <div class="lib-grid" id="libGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  NEW FOOTER – Admin Path with 5 Buttons                       -->
+    <!-- ============================================================ -->
+    <footer class="app-footer" id="appFooter">
+        <!-- 1. WhatsApp -->
+        <button class="footer-btn" id="footerWhatsappBtn" title="Open WhatsApp">
+            <span class="footer-icon">💬</span>
+            <span class="footer-label">WhatsApp</span>
+        </button>
+
+        <!-- 2. Contacts -->
+        <button class="footer-btn" id="footerContactsBtn" title="Contacts">
+            <span class="footer-icon">📞</span>
+            <span class="footer-label">Contacts</span>
+        </button>
+
+        <!-- 3. Social Media -->
+        <button class="footer-btn" id="footerSocialBtn" title="Social Media">
+            <span class="footer-icon">🌐</span>
+            <span class="footer-label">Social</span>
+        </button>
+
+        <!-- 4. Developers -->
+        <button class="footer-btn" id="footerDevelopersBtn" title="Developers">
+            <span class="footer-icon">👨‍💻</span>
+            <span class="footer-label">Developers</span>
+        </button>
+
+        <!-- 5. How To (wall bill) -->
+        <button class="footer-btn how-to" id="footerHowToBtn" title="How To">
+            <span class="footer-icon">📖</span>
+            <span class="footer-label">How To</span>
+        </button>
+    </footer>
+
+    <!-- ============================================================ -->
+    <!--  FOOTER MODALS                                                -->
+    <!-- ============================================================ -->
+
+    <!-- Contacts Modal -->
+    <div class="footer-modal-overlay" id="contactsModal">
+        <div class="footer-modal">
+            <div class="modal-header">
+                <h3>📞 Contact Numbers</h3>
+                <p>Tap a number to dial</p>
+            </div>
+            <div class="modal-body">
+                <div class="contacts-list">
+                    <div class="contact-item" data-number="+23273671566">
+                        <div class="contact-info">
+                            <span class="contact-emoji">📱</span>
+                            <div>
+                                <div class="contact-number">+232 73 671 566</div>
+                                <div class="contact-label">Primary Contact</div>
+                            </div>
+                        </div>
+                        <button class="contact-dial">📞 Dial</button>
+                    </div>
+                    <div class="contact-item" data-number="+23280422698">
+                        <div class="contact-info">
+                            <span class="contact-emoji">📱</span>
+                            <div>
+                                <div class="contact-number">+232 80 422 698</div>
+                                <div class="contact-label">Secondary Contact</div>
+                            </div>
+                        </div>
+                        <button class="contact-dial">📞 Dial</button>
+                    </div>
+                </div>
+                <p style="font-size:0.65rem; color:#64748b; margin-top:0.6rem; text-align:center;">
+                    💡 Click the <strong>Dial</strong> button or tap the contact row to open your phone's dialer.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close-modal" data-close="contactsModal">✕ Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Media Modal -->
+    <div class="footer-modal-overlay" id="socialModal">
+        <div class="footer-modal">
+            <div class="modal-header">
+                <h3>🌐 Connect With Us</h3>
+                <p>Follow us on social media</p>
+            </div>
+            <div class="modal-body">
+                <div class="social-grid">
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-link facebook">
+                        <span class="social-icon">📘</span>
+                        <span class="social-name">Facebook</span>
+                    </a>
+                    <a href="https://telegram.org" target="_blank" rel="noopener noreferrer" class="social-link telegram">
+                        <span class="social-icon">✈️</span>
+                        <span class="social-name">Telegram</span>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-link instagram">
+                        <span class="social-icon">📸</span>
+                        <span class="social-name">Instagram</span>
+                    </a>
+                </div>
+                <p style="font-size:0.65rem; color:#64748b; margin-top:0.6rem; text-align:center;">
+                    🔗 Click any icon to visit our official page.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close-modal" data-close="socialModal">✕ Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developers Modal -->
+    <div class="footer-modal-overlay" id="developersModal">
+        <div class="footer-modal">
+            <div class="modal-header">
+                <h3>👨‍💻 About the Developer</h3>
+                <p>Passionate about technology & education</p>
+            </div>
+            <div class="modal-body">
+                <div class="dev-bio">
+                    <p>
+                        <span class="dev-name">Mohamed Amine Jalloh</span>
+                        <span class="dev-emoji">✨</span>
+                    </p>
+                    <p>
+                        <span class="dev-title">💼 Web Designing &amp; Developing</span><br />
+                        <span class="dev-title">💻 Computer Programming</span><br />
+                        <span class="dev-title">📱 Android App Building &amp; Hosting</span>
+                    </p>
+                    <p>
+                        🎓 <strong>Lecturer</strong> of Computer Sciences and Reading Skills &amp; Comprehension.
+                    </p>
+                    <p>
+                        📡 <strong>Specialist</strong> in mobile configurations and network optimization.
+                    </p>
+                    <div class="dev-section">
+                        <strong>🚀 Why this application?</strong>
+                        <p style="margin-top:0.2rem;">
+                            The goal of <span class="dev-highlight">DirectPay+</span> is to <strong>simplify and ease</strong> doing trade online,
+                            sending and receiving money between users and clients. It also helps to
+                            <strong>minimize or eliminate mistakes</strong> in number entry, making transactions
+                            faster, safer, and more reliable for everyone.
+                        </p>
+                    </div>
+                    <div class="dev-section">
+                        <strong>💬 Additional Note</strong>
+                        <p style="margin-top:0.2rem;">
+                            This application is built with ❤️ to empower local businesses and individuals
+                            with a secure, easy‑to‑use digital payment solution. Feedback and contributions
+                            are always welcome!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close-modal" data-close="developersModal">✕ Close</button>
             </div>
         </div>
     </div>
@@ -2881,7 +3841,7 @@
                     loginIdentifierField.value = trimmedId;
                     qrLoginHint.classList.add('active');
                     qrLoginHint.innerText =
-                    '📷 QR code detected! Your name and identifier have been pre‑filled.';
+                        '📷 QR code detected! Your name and identifier have been pre‑filled.';
                     loginModal.style.visibility = 'visible';
                     loginModal.style.opacity = '1';
                     loginModal.classList.add('active');
@@ -3841,7 +4801,7 @@
             };
 
             // ================================================================
-            //  CHAT MODULE (with taskbar)
+            //  CHAT MODULE (with taskbar) – now triggered from header
             // ================================================================
 
             // Chat state
@@ -3868,7 +4828,7 @@
                 { id: 'u6', name: 'Frank Wilson', emoji: '🧑‍💼', image: null, online: true },
             ];
 
-            const chatFab = document.getElementById('chatFab');
+            // Remove chat-fab reference
             const chatOverlay = document.getElementById('chatOverlay');
             const chatClose = document.getElementById('chatClose');
             const chatMessages = document.getElementById('chatMessages');
@@ -3877,7 +4837,6 @@
             const dropdownToggle = document.getElementById('dropdownToggle');
             const dropdownMenu = document.getElementById('dropdownMenu');
             const selectedUserLabel = document.getElementById('selectedUserLabel');
-            const chatBadge = document.getElementById('chatBadge');
             const typingIndicator = document.getElementById('typingIndicator');
             const recordingIndicator = document.getElementById('recordingIndicator');
 
@@ -4069,7 +5028,9 @@
                 chatState.isOpen = !chatState.isOpen;
                 if (chatState.isOpen) {
                     chatOverlay.classList.add('open');
-                    chatFab.querySelector('.badge').classList.remove('active');
+                    // Remove badge from header chat button
+                    const badge = document.getElementById('headerChatBadge');
+                    if (badge) badge.classList.remove('active');
                     renderChatMessages();
                     populateUserDropdown();
                     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -4093,10 +5054,10 @@
                 const allItem = document.createElement('div');
                 allItem.className = 'user-item';
                 allItem.innerHTML = `
-                    <div class="user-avatar" style="background:#e2e8f0;font-size:1rem;">👥</div>
-                    <span class="user-name" style="font-weight:600;">All Users</span>
-                    <span class="user-status online"></span>
-                `;
+                        <div class="user-avatar" style="background:#e2e8f0;font-size:1rem;">👥</div>
+                        <span class="user-name" style="font-weight:600;">All Users</span>
+                        <span class="user-status online"></span>
+                    `;
                 allItem.addEventListener('click', () => {
                     chatState.selectedUser = null;
                     selectedUserLabel.textContent = 'All Users';
@@ -4112,10 +5073,10 @@
                         `<img src="${user.image}" alt="${user.name}" />` :
                         (user.emoji || '👤');
                     item.innerHTML = `
-                        <div class="user-avatar">${avatarContent}</div>
-                        <span class="user-name">${user.name}</span>
-                        <span class="user-status ${user.online ? 'online' : 'offline'}"></span>
-                    `;
+                            <div class="user-avatar">${avatarContent}</div>
+                            <span class="user-name">${user.name}</span>
+                            <span class="user-status ${user.online ? 'online' : 'offline'}"></span>
+                        `;
                     item.addEventListener('click', () => {
                         chatState.selectedUser = user.id;
                         selectedUserLabel.textContent = user.name;
@@ -4247,12 +5208,14 @@
 
             function updateChatBadge() {
                 const unread = chatState.messages.filter(m => m.sender === 'other').length;
-                const badge = chatBadge;
-                if (unread > 0) {
-                    badge.textContent = unread;
-                    badge.classList.add('active');
-                } else {
-                    badge.classList.remove('active');
+                const badge = document.getElementById('headerChatBadge');
+                if (badge) {
+                    if (unread > 0) {
+                        badge.textContent = unread;
+                        badge.classList.add('active');
+                    } else {
+                        badge.classList.remove('active');
+                    }
                 }
             }
 
@@ -4377,8 +5340,9 @@
                 });
             }
 
-            // Chat event bindings
-            chatFab.addEventListener('click', toggleChat);
+            // Chat event bindings – header chat button
+            const headerChatBtn = document.getElementById('headerChatBtn');
+            headerChatBtn.addEventListener('click', toggleChat);
             chatClose.addEventListener('click', closeChat);
             chatSendBtn.addEventListener('click', () => {
                 const text = chatInput.value.trim();
@@ -4467,6 +5431,195 @@
             initChatMessages();
 
             // ================================================================
+            //  PANEL TOGGLE (Client / Merchant)
+            // ================================================================
+
+            const clientToggle = document.getElementById('clientToggleBtn');
+            const merchantToggle = document.getElementById('merchantToggleBtn');
+            const clientPanel = document.getElementById('clientPanel');
+            const merchantPanel = document.getElementById('merchantPanel');
+
+            let showClient = true;
+            let showMerchant = true;
+
+            function updatePanels() {
+                if (showClient) {
+                    clientPanel.classList.remove('hidden');
+                    clientToggle.classList.add('active');
+                } else {
+                    clientPanel.classList.add('hidden');
+                    clientToggle.classList.remove('active');
+                }
+                if (showMerchant) {
+                    merchantPanel.classList.remove('hidden');
+                    merchantToggle.classList.add('active');
+                } else {
+                    merchantPanel.classList.add('hidden');
+                    merchantToggle.classList.remove('active');
+                }
+            }
+
+            clientToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showClient = !showClient;
+                updatePanels();
+            });
+
+            merchantToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showMerchant = !showMerchant;
+                updatePanels();
+            });
+
+            // Initialize panels visible
+            updatePanels();
+
+            // ================================================================
+            //  FOOTER MODULE – Admin Path with 5 Buttons
+            // ================================================================
+
+            // Get footer elements
+            const footerWhatsappBtn = document.getElementById('footerWhatsappBtn');
+            const footerContactsBtn = document.getElementById('footerContactsBtn');
+            const footerSocialBtn = document.getElementById('footerSocialBtn');
+            const footerDevelopersBtn = document.getElementById('footerDevelopersBtn');
+            const footerHowToBtn = document.getElementById('footerHowToBtn');
+
+            // Modal elements
+            const contactsModal = document.getElementById('contactsModal');
+            const socialModal = document.getElementById('socialModal');
+            const developersModal = document.getElementById('developersModal');
+
+            // Helper: open/close footer modals
+            function openFooterModal(modal) {
+                if (!modal) return;
+                modal.classList.add('active');
+            }
+
+            function closeFooterModal(modal) {
+                if (!modal) return;
+                modal.classList.remove('active');
+            }
+
+            function closeAllFooterModals() {
+                [contactsModal, socialModal, developersModal].forEach(m => {
+                    if (m) m.classList.remove('active');
+                });
+            }
+
+            // Close modals via backdrop click
+            document.querySelectorAll('.footer-modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+
+            // Close buttons inside modals
+            document.querySelectorAll('.btn-close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.dataset.close;
+                    if (targetId) {
+                        const modal = document.getElementById(targetId);
+                        if (modal) modal.classList.remove('active');
+                    }
+                });
+            });
+
+            // ---- 1. WhatsApp Button ----
+            footerWhatsappBtn.addEventListener('click', function() {
+                const phone = '+23276436811';
+                const url = `https://wa.me/${phone}`;
+                window.open(url, '_blank');
+            });
+
+            // ---- 2. Contacts Button ----
+            footerContactsBtn.addEventListener('click', function() {
+                closeAllFooterModals();
+                openFooterModal(contactsModal);
+            });
+
+            // Contacts: dial buttons and row clicks
+            document.querySelectorAll('.contact-item').forEach(item => {
+                const number = item.dataset.number;
+                // Row click
+                item.addEventListener('click', function(e) {
+                    if (e.target.closest('.contact-dial')) return;
+                    if (number) dialPhone(number);
+                });
+                // Dial button click
+                const dialBtn = item.querySelector('.contact-dial');
+                if (dialBtn) {
+                    dialBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (number) dialPhone(number);
+                    });
+                }
+            });
+
+            function dialPhone(number) {
+                if (!number) return;
+                const clean = number.replace(/\s/g, '');
+                window.location.href = `tel:${encodeURIComponent(clean)}`;
+            }
+
+            // ---- 3. Social Media Button ----
+            footerSocialBtn.addEventListener('click', function() {
+                closeAllFooterModals();
+                openFooterModal(socialModal);
+            });
+
+            // ---- 4. Developers Button ----
+            footerDevelopersBtn.addEventListener('click', function() {
+                closeAllFooterModals();
+                openFooterModal(developersModal);
+            });
+
+            // ---- 5. How To Button (Wall Bill) ----
+            footerHowToBtn.addEventListener('click', function() {
+                const wallBillUrl = 'https://aminejalloh-io.github.io/Apps-wall-bill/';
+                window.open(wallBillUrl, '_blank');
+            });
+
+            // Close modals when pressing Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAllFooterModals();
+                }
+            });
+
+            // Adjust body padding for footer
+            function adjustBodyPadding() {
+                const footer = document.getElementById('appFooter');
+                if (footer) {
+                    const height = footer.offsetHeight || 70;
+                    document.body.style.paddingBottom = (height + 12) + 'px';
+                }
+            }
+
+            window.addEventListener('load', adjustBodyPadding);
+            window.addEventListener('resize', adjustBodyPadding);
+            setTimeout(adjustBodyPadding, 300);
+
+            // ================================================================
+            //  STICKY HEADER SHADOW ON SCROLL
+            // ================================================================
+            const stickyHeader = document.getElementById('stickyHeader');
+            if (stickyHeader) {
+                let lastScrollY = window.scrollY;
+                window.addEventListener('scroll', function() {
+                    const scrollY = window.scrollY;
+                    if (scrollY > 20) {
+                        stickyHeader.classList.add('scrolled');
+                    } else {
+                        stickyHeader.classList.remove('scrolled');
+                    }
+                    lastScrollY = scrollY;
+                }, { passive: true });
+            }
+
+            // ================================================================
             //  INITIALIZATION (main app + edit styles)
             // ================================================================
 
@@ -4532,7 +5685,10 @@
             const savedStyles = getPageStyles();
             applyPageStyles(savedStyles);
 
-            console.log('DirectPay+ with animated App Store banner loaded.');
+            // Apply footer padding after everything
+            setTimeout(adjustBodyPadding, 500);
+
+            console.log('DirectPay+ with sticky header, admin footer, and panel toggles loaded.');
             if (qrDetected) {
                 console.log('🔍 QR login detected, pre-filled credentials.');
             }
