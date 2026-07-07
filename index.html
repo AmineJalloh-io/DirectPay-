@@ -2808,7 +2808,7 @@
         </div>
     </div>
 
-    <!-- ===== EDIT PAGE MODAL ===== -->
+    <!-- ===== EDIT PAGE MODAL (FIXED) ===== -->
     <div id="editModal" class="edit-modal-overlay">
         <div class="edit-modal">
             <div class="modal-header">
@@ -4545,7 +4545,7 @@
             });
 
             // ================================================================
-            //  EDIT PAGE MODULE
+            //  EDIT PAGE MODULE – FIXED with robust event binding
             // ================================================================
 
             const editModal = document.getElementById('editModal');
@@ -4675,6 +4675,7 @@
             function openEditModal() {
                 const styles = getPageStyles();
                 applyPageStyles(styles);
+                // Ensure preview image is shown if exists
                 if (styles && styles.bgImage) {
                     const existingImg = editPreviewBox.querySelector('.preview-img');
                     if (!existingImg) {
@@ -4697,8 +4698,9 @@
                 editModal.classList.remove('active');
             }
 
-            editPageBtn.onclick = openEditModal;
-            editCloseBtn.onclick = closeEditModal;
+            // Attach events using addEventListener for reliability
+            editPageBtn.addEventListener('click', openEditModal);
+            editCloseBtn.addEventListener('click', closeEditModal);
             editModal.addEventListener('click', function(e) {
                 if (e.target === this) closeEditModal();
             });
@@ -4742,7 +4744,7 @@
                 }
             });
 
-            editBgResetBtn.onclick = function() {
+            editBgResetBtn.addEventListener('click', function() {
                 const styles = getPageStyles() || {};
                 delete styles.bgColor;
                 delete styles.bgImage;
@@ -4751,7 +4753,7 @@
                 editPreviewBox.querySelectorAll('.preview-img').forEach(el => el.remove());
                 editPreviewText.textContent = 'No background image set';
                 editBgColor.value = '#f8fafc';
-            };
+            });
 
             function adjustFontSize(delta) {
                 const styles = getPageStyles() || {};
@@ -4762,14 +4764,14 @@
                 savePageStyles(styles);
             }
 
-            editFontIncBtn.onclick = () => adjustFontSize(5);
-            editFontDecBtn.onclick = () => adjustFontSize(-5);
-            editFontResetBtn.onclick = function() {
+            editFontIncBtn.addEventListener('click', () => adjustFontSize(5));
+            editFontDecBtn.addEventListener('click', () => adjustFontSize(-5));
+            editFontResetBtn.addEventListener('click', function() {
                 const styles = getPageStyles() || {};
                 delete styles.fontSize;
                 applyPageStyles(styles);
                 savePageStyles(styles);
-            };
+            });
 
             function adjustBrightness(delta) {
                 const styles = getPageStyles() || {};
@@ -4780,16 +4782,16 @@
                 savePageStyles(styles);
             }
 
-            editBrightIncBtn.onclick = () => adjustBrightness(5);
-            editBrightDecBtn.onclick = () => adjustBrightness(-5);
-            editBrightResetBtn.onclick = function() {
+            editBrightIncBtn.addEventListener('click', () => adjustBrightness(5));
+            editBrightDecBtn.addEventListener('click', () => adjustBrightness(-5));
+            editBrightResetBtn.addEventListener('click', function() {
                 const styles = getPageStyles() || {};
                 delete styles.brightness;
                 applyPageStyles(styles);
                 savePageStyles(styles);
-            };
+            });
 
-            editResetAllBtn.onclick = function() {
+            editResetAllBtn.addEventListener('click', function() {
                 if (confirm('Reset all page appearance settings to defaults?')) {
                     localStorage.removeItem(PAGE_STYLES_KEY);
                     applyPageStyles(null);
@@ -4798,7 +4800,7 @@
                     editPreviewText.textContent = 'No background image set';
                     editBgColor.value = '#f8fafc';
                 }
-            };
+            });
 
             // ================================================================
             //  CHAT MODULE (with taskbar) – now triggered from header
